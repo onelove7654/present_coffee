@@ -10,33 +10,18 @@
 
 <style>
   :root{
-    /* 화이트 배경 + 그린 포인트 */
-    --bg:#ffffff;           /* 전체 배경 */
-    --card:#ffffff;         /* 카드 배경 */
-    --ink:#1f2937;          /* 본문 텍스트 */
-    --muted:#6b7280;        /* 보조 텍스트 */
-    --accent:#16a34a;       /* 포인트(버튼/게이지) emerald-600 */
-    --accent-3:#d1fae5;     /* 게이지 백그라운드 emerald-100 */
-    --chip:#f3f4f6;         /* 칩 배경(밝은 회색) */
-    --chip-text:#374151;    /* 칩 텍스트 */
-    --border:#e5e7eb;       /* 카드 테두리 */
-    --shadow:0 8px 28px rgba(0,0,0,.07);
-    --radius:18px;
+    --bg:#ffffff; --card:#ffffff; --ink:#1f2937; --muted:#6b7280;
+    --accent:#16a34a; --accent-3:#d1fae5; --chip:#f3f4f6; --chip-text:#374151;
+    --border:#e5e7eb; --shadow:0 8px 28px rgba(0,0,0,.07); --radius:18px;
   }
   *{box-sizing:border-box}
-  body{
-    font-family:Pretendard,system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,sans-serif;
-    background:var(--bg); color:var(--ink); margin:0;
-  }
+  body{font-family:Pretendard,system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,sans-serif;background:var(--bg);color:var(--ink);margin:0}
   .wrap{max-width:680px;margin:0 auto;padding:24px 18px 32px}
   .brand{display:flex;align-items:center;gap:12px;margin:6px 0 18px}
   .brand img{width:42px;height:42px;object-fit:cover;border-radius:10px;box-shadow:var(--shadow);background:#fff}
   .brand h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.3px}
 
-  .card{
-    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-    padding:20px;margin:16px 0;border:1px solid var(--border);
-  }
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:16px 0;border:1px solid var(--border)}
   .title{font-size:22px;margin:0 0 6px;font-weight:800}
   .desc{color:var(--muted);line-height:1.65;margin:4px 0 0}
 
@@ -48,7 +33,10 @@
 
   .hint{color:var(--muted);font-size:12px;margin-top:6px}
 
-  .row{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
+  .row{display:flex;justify-content:space-between;align-items:center;margin:12px 0}
+  .left{display:flex;align-items:center;gap:10px}
+  .ico{font-size:18px;width:22px;text-align:center}
+
   .bar{height:10px;background:var(--accent-3);border-radius:999px;overflow:hidden}
   .fill{height:100%;background:var(--accent)}
 
@@ -64,18 +52,10 @@
   .foot{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
   .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:1px}
 
-  .btn{
-    appearance:none;border:0;background:var(--accent);color:#fff;border-radius:12px;
-    padding:12px 16px;font-weight:700;cursor:pointer;box-shadow:var(--shadow)
-  }
+  .btn{appearance:none;border:0;background:var(--accent);color:#fff;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
   .btn:active{transform:translateY(1px)}
 
-  /* 할인 안내 배너 */
-  .notice{
-    display:flex;gap:10px;align-items:flex-start;
-    background:#ecfdf5;border:1px dashed var(--accent);color:#065f46;
-    padding:12px 14px;border-radius:14px;font-size:14px
-  }
+  .notice{display:flex;gap:10px;align-items:flex-start;background:#ecfdf5;border:1px dashed var(--accent);color:#065f46;padding:12px 14px;border-radius:14px;font-size:14px}
 </style>
 </head>
 <body>
@@ -90,14 +70,11 @@
   <div class="card">
     <div class="section-title">
       <div>
-        <!-- 요청: '고객님의 오늘의 운세' -> '오늘의 운세' -->
         <div class="title">오늘의 운세</div>
         <div id="fortuneText" class="desc"></div>
       </div>
-      <!-- 요청: 공유 버튼 초록색 -->
       <button id="shareBtn" class="btn">공유하기</button>
     </div>
-
     <div class="chips">
       <div class="chip">유효기간 <span id="validUntil" class="mono"></span></div>
       <div class="chip">확인코드 <span id="dailyCode" class="mono"></span></div>
@@ -105,19 +82,35 @@
     <div class="hint">* 화면 캡처 지참 시 <b>3일 이내</b> 사용 가능 (유효일자·코드 확인)</div>
   </div>
 
-  <!-- 점수 (요청: 초록색 바) -->
+  <!-- 점수 (초록색 바) -->
   <div class="card">
     <div class="title">점수</div>
     <div id="scores"></div>
   </div>
 
-  <!-- 행운 키워드 (요청: 컬러는 색상으로 표시) -->
+  <!-- 행운 키워드 (이모티콘 + 컬러 스와치) -->
   <div class="card">
     <div class="title">행운 키워드</div>
-    <div class="row"><div>숫자</div><div id="kwNumber" class="pill"></div></div>
-    <div class="row"><div>방향</div><div id="kwDir" class="pill"></div></div>
-    <div class="row"><div>컬러</div><div id="kwColor" class="pill color-pill"></div></div>
-    <div class="row"><div>음식</div><div id="kwFood" class="pill"></div></div>
+
+    <div class="row">
+      <div class="left"><span class="ico">🎟️</span><div>숫자</div></div>
+      <div id="kwNumber" class="pill"></div>
+    </div>
+
+    <div class="row">
+      <div class="left"><span class="ico">🧭</span><div>방향</div></div>
+      <div id="kwDir" class="pill"></div>
+    </div>
+
+    <div class="row">
+      <div class="left"><span class="ico">🎨</span><div>컬러</div></div>
+      <div id="kwColor" class="pill color-pill"></div>
+    </div>
+
+    <div class="row">
+      <div class="left"><span class="ico">🍽️</span><div>음식</div></div>
+      <div id="kwFood" class="pill"></div>
+    </div>
   </div>
 
   <!-- 오늘의 행운 음료 -->
@@ -130,7 +123,7 @@
         <div id="drinkNote" class="note"></div>
       </div>
     </div>
-    <!-- 요청: 캡처 후 가져오면 1,000원 할인 안내 -->
+
     <div class="notice" style="margin-top:14px;">
       <div>💚</div>
       <div><b>캡처 제시 시 추천 음료 1,000원 할인</b><br>
@@ -139,14 +132,14 @@
   </div>
 
   <div class="foot">
-    페이지 생성 (KST): <span id="nowKST"></span>
-    <br/>지점/캠페인: <span id="shopId" class="code"></span>
+    페이지 생성 (KST): <span id="nowKST"></span><br/>
+    지점/캠페인: <span id="shopId" class="code"></span>
   </div>
 </div>
 
 <script>
 (function(){
-  // ---- KST 기준 날짜/시간 ----
+  // ---- KST ----
   const nowUTC = new Date();
   const nowKST = new Date(nowUTC.getTime() + 9*60*60*1000);
   const yyyy = nowKST.getUTCFullYear();
@@ -154,12 +147,12 @@
   const dd = String(nowKST.getUTCDate()).padStart(2,'0');
   const todayStr = `${yyyy}-${mm}-${dd}`;
 
-  // ---- URL 파라미터 ----
+  // ---- params ----
   const params = new URLSearchParams(location.search);
   const shop = (params.get('id') || 'default').toLowerCase();
-  const useShuffle = (params.get('mode') === 'shuffle'); // 섞기 모드
+  const useShuffle = (params.get('mode') === 'shuffle');
 
-  // ---- 운세(40개) ----
+  // ---- fortunes (발췌: 40개) ----
   const fortunes = [
     "주변의 배려가 빛나는 날입니다. 작은 친절에도 마음이 따뜻해지고, 당신이 전한 감사는 생각보다 빠르게 돌아옵니다. 오늘은 ‘고맙다’는 말을 조금 더 자주, 조금 더 진심으로 건네보세요.",
     "해야 할 일의 흐름이 한 줄로 정리되는 날. 미뤄둔 일의 첫 단추를 끼우면 그다음은 의외로 가볍게 풀립니다. 체크리스트 맨 위 한 가지를 지금 시작해 보세요—오늘의 집중력이 도와줄 거예요.",
@@ -203,17 +196,19 @@
     "가끔은 우회가 지름길입니다. 돌아가는 길에서 더 좋은 풍경을 만나게 됩니다."
   ];
 
-  // 키워드/음료
+  // ---- 키워드/음료 (컬러는 '색상명'으로 표기) ----
   const directions = ["동쪽","서쪽","남쪽","북쪽","동남쪽","서남쪽","동북쪽","서북쪽"];
-  const colors = ["말차 포레스트","로즈 핑크","피치 오렌지","바닐라 크림","하늘 민트","초코 브라운"];
-  const colorHex = {
-    "말차 포레스트":"#2e7d32",
-    "로즈 핑크":"#f472b6",
-    "피치 오렌지":"#fb923c",
-    "바닐라 크림":"#f5e6c8",
-    "하늘 민트":"#99f6e4",
-    "초코 브라운":"#6b3f2a"
-  };
+
+  // 내부 키값 + 표기명 + 실제 색
+  const colorOptions = [
+    {key:"forest", name:"포레스트 그린", hex:"#2e7d32"},
+    {key:"rose",   name:"로즈 핑크",   hex:"#f472b6"},
+    {key:"peach",  name:"피치 오렌지", hex:"#fb923c"},
+    {key:"vanilla",name:"바닐라 크림", hex:"#f5e6c8"},
+    {key:"mint",   name:"민트 블루",   hex:"#99f6e4"},
+    {key:"choco",  name:"초코 브라운", hex:"#6b3f2a"}
+  ];
+
   const foods  = ["소갈비","파스타","마카롱","연어샐러드","김치볶음밥","크루아상"];
   const drinks = [
     {name:"디카페인 핑크카페라떼", img:"https://picsum.photos/seed/pink/240", note:"부담 없이 달콤하게"},
@@ -246,7 +241,10 @@
     {label:"학업", val: randInt(60,95)},
     {label:"건강", val: randInt(70,99)},
   ];
-  const kw = { number: randInt(1,9), dir: pick(directions), color: pick(colors), food: pick(foods) };
+  const kwNumber = randInt(1,9);
+  const kwDir = pick(directions);
+  const kwColor = pick(colorOptions);
+  const kwFood = pick(foods);
   const drink = pick(drinks);
 
   // ---- 3일 유효일 ----
@@ -261,20 +259,16 @@
   document.getElementById('validUntil2').textContent = validStr;
   document.getElementById('dailyCode').textContent = dailyCode;
 
-  document.getElementById('kwNumber').textContent = kw.number;
-  document.getElementById('kwDir').textContent = kw.dir;
+  document.getElementById('kwNumber').textContent = kwNumber;
+  document.getElementById('kwDir').textContent = kwDir;
 
-  // 컬러: 스와치 + 이름
+  // 컬러: 스와치 + '색깔 이름' 표기
   const colorEl = document.getElementById('kwColor');
-  const sw = document.createElement('span');
-  sw.className = 'swatch';
-  sw.style.background = colorHex[kw.color] || '#aaa';
-  colorEl.appendChild(sw);
-  const txt = document.createElement('span');
-  txt.textContent = kw.color;
-  colorEl.appendChild(txt);
+  const sw = document.createElement('span'); sw.className='swatch'; sw.style.background = kwColor.hex;
+  const txt = document.createElement('span'); txt.textContent = kwColor.name;
+  colorEl.appendChild(sw); colorEl.appendChild(txt);
 
-  document.getElementById('kwFood').textContent = kw.food;
+  document.getElementById('kwFood').textContent = kwFood;
 
   document.getElementById('drinkName').textContent = drink.name;
   document.getElementById('drinkImg').src = drink.img;
@@ -288,7 +282,7 @@
   const holder = document.getElementById('scores');
   scores.forEach(s=>{
     const row = document.createElement('div'); row.className='row';
-    row.innerHTML = `<div>${s.label}</div><div>${s.val}점</div>`;
+    row.innerHTML = `<div class="left"><div>${s.label}</div></div><div>${s.val}점</div>`;
     const bar = document.createElement('div'); bar.className='bar';
     const fill = document.createElement('div'); fill.className='fill'; fill.style.width=`${s.val}%`;
     bar.appendChild(fill);
