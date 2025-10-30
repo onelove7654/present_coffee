@@ -62,25 +62,25 @@
 <div class="wrap">
   <!-- 상단 로고 + 브랜드 네임 -->
   <div class="brand">
-    <img src="logo.jpg" alt="현재의 공간 로고" onerror="this.style.display='none'">
-    <h1>현재의 공간 • 오늘의 운세</h1>
-  </div>
+    <img src="logo.jpg" alt="Present Coffee 로고" onerror="this.style.display='none'">
+  <h1>Present Coffee • 운세</h1>
+</div>
 
-  <!-- 운세 -->
-  <div class="card">
-    <div class="section-title">
-      <div>
-        <div class="title">오늘의 운세</div>
-        <div id="fortuneText" class="desc"></div>
-      </div>
-      <button id="shareBtn" class="btn">공유하기</button>
+<!-- 운세 -->
+<div class="card">
+  <div class="section-title">
+    <div>
+      <div class="title">운세</div>
+      <div id="fortuneText" class="desc"></div>
     </div>
-    <div class="chips">
-      <div class="chip">유효기간 <span id="validUntil" class="mono"></span></div>
-      <div class="chip">확인코드 <span id="dailyCode" class="mono"></span></div>
-    </div>
-    <div class="hint">* 화면 캡처 지참 시 <b>3일 이내</b> 사용 가능 (유효일자·코드 확인)</div>
+    <button id="shareBtn" class="btn">공유하기</button>
   </div>
+  <div class="chips">
+    <div class="chip">유효기간 <span id="validUntil" class="mono"></span></div>
+    <div class="chip">확인코드 <span id="dailyCode" class="mono"></span></div>
+  </div>
+  <div class="hint">* 화면 캡처 지참 시 <b>3일 이내</b> 사용 가능 (유효일자·코드 확인)</div>
+</div>
 
   <!-- 점수 (초록색 바) -->
   <div class="card">
@@ -292,25 +292,26 @@ const fortunes = [
   ];
 
   const foods  = ["소갈비","파스타","마카롱","연어샐러드","김치볶음밥","크루아상"];
-  const drinks = [
-      {name:"아메리카노", note:"와이니한 향과 깔끔한 산미가 인상적인 아메리카노"},
-  {name:"카페라떼", note:"부드러운 우유와 깔끔한 에스프레소가 어우러진 라떼"},
-  {name:"바닐라라떼", note:"은은한 바닐라 향이 감도는 달콤하고 부드러운 라떼"},
-  {name:"헤이즐넛라떼", note:"고소한 헤이즐넛 향과 진한 에스프레소의 조화"},
-  {name:"아인슈페너", note:"부드러운 크림 위에 쌉싸름한 에스프레소가 어우러진 커피"},
-  {name:"초코라떼", note:"진한 초콜릿 풍미가 입안을 부드럽게 감싸는 달콤한 라떼"},
-  {name:"말차라떼", note:"쌉싸름한 말차와 고소한 우유가 어우러진 균형 잡힌 라떼"},
-  {name:"밀크티", note:"진하게 우려낸 홍차에 부드러운 우유가 더해진 클래식한 밀크티"},
-  {name:"화분스무디", note:"초코 크럼블이 토핑된 달콤하고 시원한 디저트 스무디"},
-  {name:"히치아이스티", note:"상큼한 복숭아 과 깔끔한 단맛이 어우러진 아이스티"},
-  {name:"애플티", note:"사과의 달콤함과 은은한 향이 퍼지는 따뜻한 티"},
-  {name:"에메랄드에이드", note:"청량한 색감과 상큼한 맛이 돋보이는 스파클링 에이드"},
+ const drinks = [
+  {name:"아메리카노", img:"logo.jpg", note:"와이니한 향과 깔끔한 산미가 인상적인 아메리카노"},
+  {name:"카페라떼", img:"logo.jpg", note:"부드러운 우유와 깔끔한 에스프레소가 어우러진 라떼"},
+  {name:"바닐라라떼", img:"logo.jpg", note:"은은한 바닐라 향이 감도는 달콤하고 부드러운 라떼"},
+  {name:"헤이즐넛라떼", img:"logo.jpg", note:"고소한 헤이즐넛 향과 진한 에스프레소의 조화"},
+  {name:"아인슈페너", img:"logo.jpg", note:"부드러운 크림 위에 쌉싸름한 에스프레소가 어우러진 커피"},
+  {name:"초코라떼", img:"logo.jpg", note:"진한 초콜릿 풍미가 입안을 부드럽게 감싸는 달콤한 라떼"},
+  {name:"말차라떼", img:"logo.jpg", note:"쌉싸름한 말차와 고소한 우유가 어우러진 균형 잡힌 라떼"},
+  {name:"밀크티", img:"logo.jpg", note:"진하게 우려낸 홍차에 부드러운 우유가 더해진 클래식한 밀크티"},
+  {name:"화분스무디", img:"logo.jpg", note:"초코 크럼블이 토핑된 달콤하고 시원한 디저트 스무디"},
+  {name:"히치아이스티", img:"logo.jpg", note:"상큼한 과일 향과 깔끔한 단맛이 어우러진 아이스티"},
+  {name:"애플티", img:"logo.jpg", note:"사과의 달콤함과 은은한 향이 퍼지는 따뜻한 티"},
+  {name:"에메랄드에이드", img:"logo.jpg", note:"청량한 색감과 상큼한 맛이 돋보이는 스파클링 에이드"},
   
-  // 시즌 음료
-  {name:"말차밤라떼", note:"쌉싸름한 말차와 고소한 밤이 조화로운 시즌 라떼"},
-  {name:"밤밀크티라떼", note:"진한 밀크티에 부드러운 밤 크림이 더해진 가을 한정 음료"},
-  {name:"초코밤스무디", note:"진한 초콜릿과 달콤한 밤이 어우러진 꾸덕한 스무디"}
+  // 🍂 시즌음료
+  {name:"말차밤라떼", img:"logo.jpg", note:"쌉싸름한 말차와 고소한 밤이 조화로운 시즌 라떼"},
+  {name:"밤밀크티라떼", img:"logo.jpg", note:"진한 밀크티에 부드러운 밤 크림이 더해진 가을 한정 음료"},
+  {name:"초코밤스무디", img:"logo.jpg", note:"진한 초콜릿과 달콤한 밤이 어우러진 꾸덕한 스무디"}
 ];
+
 
   // ---- 해시/난수 & 모드 ----
   function strHash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0;}return h>>>0;}
