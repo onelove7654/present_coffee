@@ -139,19 +139,36 @@
 
 <script>
 (function(){
-  // ---- KST ----
-  const nowUTC = new Date();
-  const nowKST = new Date(nowUTC.getTime() + 9*60*60*1000);
-  const yyyy = nowKST.getUTCFullYear();
-  const mm = String(nowKST.getUTCMonth()+1).padStart(2,'0');
-  const dd = String(nowKST.getUTCDate()).padStart(2,'0');
-  const todayStr = `${yyyy}-${mm}-${dd}`;
+  // ... (위쪽 동일: nowKST, todayStr, params, shop, useShuffle, fortunes 등)
 
-  // ---- params ----
-  const params = new URLSearchParams(location.search);
-  const shop = (params.get('id') || 'default').toLowerCase();
-  const useShuffle = (params.get('mode') === 'shuffle');
+  // 해시/PRNG
+  function strHash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0;}return h>>>0;}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
+  // 브라우저별 고유 ID (최초 1회 생성)
+  let userId = localStorage.getItem("presentCoffeeUserId");
+  if (!userId) {
+    userId = Math.random().toString(36).substring(2,10);
+    localStorage.setItem("presentCoffeeUserId", userId);
+  }
+  // 개발/테스트 시 강제 셔플 모드도 지원 (URL에 ?mode=shuffle)
+  if (useShuffle) userId += "|shuffle|" + Math.random().toString(36).slice(2);
+
+  // 항목별로 서로 다른 시드/난수 생성기
+  const makeRand = (label) => mulberry32(strHash(`${shop}|${todayStr}|${userId}|${label}`));
+  const rFortune = makeRand("fortune");   // 운세
+  const rDrink   = makeRand("drink");     // 음료
+  const rScore   = makeRand("score");     // 점수
+  const rKW      = makeRand("keyword");   // 키워드(숫자/방향/컬러/음식)
+
+  // 공용 헬퍼
+  const pickFrom   = (arr, r)           => arr[Math.floor(r() * arr.length)];
+  const randIntFrom= (r, min, max)      => Math.floor(r() * (max - min + 1)) + min;
+
+  // 확인코드는 하루/지점 고정(기존 그대로)
+  const stableSeed = strHash(`${shop}|${todayStr}`);
+  const dailyCode  = String((stableSeed % 1000000 + 1000000) % 1000000).padStart(6,'0');
+  
   // ---- fortunes (발췌: 40개) ----
   const fortunes = [
  // 현재의 공간 — 브랜드 맞춤형 감성 운세 50개 (≈400자 내외)
@@ -335,19 +352,22 @@ if (!userId) {
   const dailyCode = String((stableSeed % 1000000 + 1000000) % 1000000).padStart(6,'0');
 
   // ---- 결과 생성 ----
-  const fortune = pick(fortunes);
-  const scores = [
-    {label:"금전", val: randInt(70,98)},
-    {label:"직장", val: randInt(60,95)},
-    {label:"애정", val: randInt(65,100)},
-    {label:"학업", val: randInt(60,95)},
-    {label:"건강", val: randInt(70,99)},
-  ];
-  const kwNumber = randInt(1,9);
-  const kwDir = pick(directions);
-  const kwColor = pick(colorOptions);
-  const kwFood = pick(foods);
-  const drink = pick(drinks);
+  const fortune = pickFrom(fortunes, rFortune);
+
+const scores = [
+  {label:"금전", val: randIntFrom(rScore, 70, 98)},
+  {label:"직장", val: randIntFrom(rScore, 60, 95)},
+  {label:"애정", val: randIntFrom(rScore, 65,100)},
+  {label:"학업", val: randIntFrom(rScore, 60, 95)},
+  {label:"건강", val: randIntFrom(rScore, 70, 99)},
+];
+
+const kwNumber = randIntFrom(rKW, 1, 9);
+const kwDir    = pickFrom(directions,   rKW);
+const kwColor  = pickFrom(colorOptions, rKW);
+const kwFood   = pickFrom(foods,        rKW);
+
+const drink    = pickFrom(drinks,       rDrink);
 
   // ---- 3일 유효일 ----
   const valid = new Date(Date.UTC(yyyy, Number(mm)-1, Number(dd)));
