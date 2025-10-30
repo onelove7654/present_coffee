@@ -3,45 +3,74 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>오늘의 운세 & 행운 음료</title>
+<title>현재의 공간 — 오늘의 운세 & 행운 음료</title>
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+
 <style>
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,sans-serif;background:#fff8e8;margin:0;color:#222}
-  .wrap{max-width:520px;margin:0 auto;padding:24px}
-  .card{background:#fff;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:20px;margin:16px 0}
-  h1{font-size:22px;margin:0 0 6px}
-  h2{font-size:18px;margin:0 0 12px}
-  .bar{height:10px;background:#ffe2bf;border-radius:999px;overflow:hidden}
-  .fill{height:100%;background:#ff8a3d}
+  :root{
+    --bg:#f7efe3; --card:#fff9f1; --ink:#2b2b2b; --muted:#6b6b6b;
+    --accent:#d67b36; --accent-2:#ffb070; --accent-3:#ffe2c8;
+    --badge:#3b2d22; --shadow:0 10px 30px rgba(0,0,0,.08); --radius:18px;
+  }
+  *{box-sizing:border-box}
+  body{font-family:Pretendard,system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Malgun Gothic,sans-serif;background:var(--bg);color:var(--ink);margin:0}
+  .wrap{max-width:680px;margin:0 auto;padding:24px 18px 28px}
+  .brand{display:flex;align-items:center;gap:12px;margin:6px 0 18px}
+  .brand img{width:42px;height:42px;object-fit:cover;border-radius:10px;box-shadow:var(--shadow);background:#fff}
+  .brand h1{font-size:18px;margin:0;font-weight:700;letter-spacing:.3px}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:16px 0;border:1px solid #ffe7d3}
+  .title{font-size:22px;margin:0 0 6px;font-weight:800}
+  .desc{color:var(--muted);line-height:1.65;margin:4px 0 0}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .chip{background:#ffeede;color:var(--badge);padding:6px 10px;border-radius:999px;font-size:12px}
+  .chip .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:1px}
+  .hint{color:var(--muted);font-size:12px;margin-top:6px}
   .row{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
-  .pill{display:inline-block;background:#222;color:#fff;border-radius:999px;padding:6px 10px;font-size:12px}
-  .badge{display:inline-block;background:#ffeede;color:#ad4b00;padding:4px 8px;border-radius:8px;margin-left:8px;font-size:12px}
-  .muted{color:#666;font-size:12px}
+  .bar{height:10px;background:var(--accent-3);border-radius:999px;overflow:hidden}
+  .fill{height:100%;background:var(--accent);opacity:.9}
+  .pill{display:inline-block;background:#2b2b2b;color:#fff;border-radius:999px;padding:6px 10px;font-size:12px}
   .drink{display:flex;gap:12px;align-items:center}
-  .drink img{width:64px;height:64px;border-radius:10px;object-fit:cover;background:#f2f2f2}
-  .big{font-size:28px;font-weight:700}
-  .foot{font-size:12px;color:#666;text-align:center;margin-top:12px}
-  .code{font-family:ui-monospace, SFMono-Regular, Menlo, monospace;letter-spacing:1px}
+  .drink img{width:72px;height:72px;border-radius:12px;object-fit:cover;background:#f2f2f2;box-shadow:var(--shadow)}
+  .drink .name{font-size:22px;font-weight:800;margin-bottom:4px}
+  .drink .note{color:var(--muted);font-size:13px}
+  .foot{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
+  .code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:1px}
+  .btn{appearance:none;border:0;background:var(--accent);color:#fff;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+  .btn:active{transform:translateY(1px)}
+  .section-title{display:flex;justify-content:space-between;align-items:center;gap:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card">
-    <h1>고객님의 오늘의 운세</h1>
-    <div id="fortuneText" style="line-height:1.5;margin-top:8px;"></div>
-    <div class="row" style="margin-top:12px;">
-      <div class="pill">유효기간 <span id="validUntil" class="badge"></span></div>
-      <div class="pill">확인코드 <span id="dailyCode" class="badge code"></span></div>
-    </div>
-    <div class="muted" style="margin-top:6px;">* 화면 캡처 지참 시 <b>3일 이내</b> 사용 가능 (유효일자·코드 확인)</div>
+  <div class="brand">
+    <img src="logo.jpg" alt="현재의 공간 로고" onerror="this.style.display='none'">
+    <h1>현재의 공간 • 오늘의 운세</h1>
   </div>
 
   <div class="card">
-    <h2>점수</h2>
+    <div class="section-title">
+      <div>
+        <div class="title">고객님의 오늘의 운세</div>
+        <div id="fortuneText" class="desc"></div>
+      </div>
+      <button id="shareBtn" class="btn">공유하기</button>
+    </div>
+    <div class="chips">
+      <div class="chip">유효기간 <span id="validUntil" class="mono"></span></div>
+      <div class="chip">확인코드 <span id="dailyCode" class="mono"></span></div>
+    </div>
+    <div class="hint">* 화면 캡처 지참 시 <b>3일 이내</b> 사용 가능 (유효일자·코드 확인)</div>
+  </div>
+
+  <div class="card">
+    <div class="title">점수</div>
     <div id="scores"></div>
   </div>
 
   <div class="card">
-    <h2>행운 키워드</h2>
+    <div class="title">행운 키워드</div>
     <div class="row"><div>숫자</div><div id="kwNumber" class="pill"></div></div>
     <div class="row"><div>방향</div><div id="kwDir" class="pill"></div></div>
     <div class="row"><div>컬러</div><div id="kwColor" class="pill"></div></div>
@@ -49,67 +78,105 @@
   </div>
 
   <div class="card">
-    <h2>오늘의 행운 음료</h2>
+    <div class="title">오늘의 행운 음료</div>
     <div class="drink">
       <img id="drinkImg" alt="drink"/>
       <div>
-        <div id="drinkName" class="big"></div>
-        <div id="drinkNote" class="muted"></div>
+        <div id="drinkName" class="name"></div>
+        <div id="drinkNote" class="note"></div>
       </div>
     </div>
   </div>
 
   <div class="foot">
-    페이지 생성 기준 (KST): <span id="nowKST"></span>
+    페이지 생성 (KST): <span id="nowKST"></span>
     <br/>지점/캠페인: <span id="shopId" class="code"></span>
   </div>
 </div>
 
 <script>
 (function(){
-  // --- 유틸: KST 현재 날짜/시간 ---
+  // --- KST 날짜/시간 ---
   const nowUTC = new Date();
-  const nowKST = new Date(nowUTC.getTime() + (9 * 60 * 60 * 1000));
+  const nowKST = new Date(nowUTC.getTime() + 9*60*60*1000);
   const yyyy = nowKST.getUTCFullYear();
   const mm = String(nowKST.getUTCMonth()+1).padStart(2,'0');
   const dd = String(nowKST.getUTCDate()).padStart(2,'0');
-  const todayStr = `${yyyy}-${mm}-${dd}`; // 매일 0시 기준 seed
+  const todayStr = `${yyyy}-${mm}-${dd}`;
 
-  // --- URL 파라미터: ?id=지점코드 (없으면 'default') ---
+  // --- 파라미터 ---
   const params = new URLSearchParams(location.search);
   const shop = (params.get('id') || 'default').toLowerCase();
+  const useShuffle = (params.get('mode') === 'shuffle'); // 섞기 모드
 
-  // --- 데이터 (원하시면 자유롭게 수정) ---
+  // --- 데이터(운세 40개) ---
   const fortunes = [
-    "오늘은 사랑이 반짝이는 하루예요. 마음이 닿는 사람과의 순간이 특별해질 거예요.",
-    "작은 행운이 큰 행복으로 이어집니다. 기회가 보이면 가볍게 잡아보세요.",
-    "집중력이 높아지는 날! 미뤄둔 일을 시작하면 술술 풀릴 거예요.",
-    "주변의 배려가 빛나는 날. 감사 인사를 전하면 더 큰 선물이 돌아옵니다.",
-    "새로운 아이디어가 번쩍! 메모해두면 며칠 내 좋은 결과가 나옵니다."
+    "주변의 배려가 빛나는 날입니다. 작은 친절에도 마음이 따뜻해지고, 당신이 전한 감사는 생각보다 빠르게 돌아옵니다. 오늘은 ‘고맙다’는 말을 조금 더 자주, 조금 더 진심으로 건네보세요.",
+    "해야 할 일의 흐름이 한 줄로 정리되는 날. 미뤄둔 일의 첫 단추를 끼우면 그다음은 의외로 가볍게 풀립니다. 체크리스트 맨 위 한 가지를 지금 시작해 보세요—오늘의 집중력이 도와줄 거예요.",
+    "사람과 사람 사이의 온도가 포근해지는 날. 대화 속에서 새로운 힌트를 얻고, 오래 고민하던 문제는 의외의 말 한마디로 실마리를 찾습니다. 오늘은 ‘듣는 시간’을 조금 더 길게 가져보세요.",
+    "감각이 맑아지는 날입니다. 좋아하는 향을 맡고, 가볍게 걷고, 차 한 잔을 천천히 마셔 보세요. 사소한 루틴이 마음의 속도를 낮춰주고, 좋은 선택을 도와줄 거예요.",
+    "작은 행운이 연달아 들어오는 날. 우연처럼 보이는 기회가 보이면 가볍게 잡아보세요. 결과도 중요하지만, 오늘은 ‘움직이는 마음’ 자체가 당신을 더 좋은 곳으로 데려갑니다.",
+    "평소보다 컨디션 회복이 빠른 날. 몸이 가벼울 때 가벼운 정리를 시작하면 마음도 함께 정돈됩니다. 버릴 것은 과감히, 남길 것은 소중히.",
+    "관계에서 신뢰가 단단해지는 날입니다. 약속을 지키는 작은 행동이 큰 신뢰를 만듭니다. 오늘의 한 약속이 내일의 든든함이 됩니다.",
+    "아이디어가 번쩍이는 순간이 찾아옵니다. 떠오르는 생각을 곧바로 메모해 두세요. 오늘의 메모는 며칠 뒤 실제 결과로 이어질 확률이 높습니다.",
+    "예상치 못한 도움을 받는 날. 도움을 받은 만큼, 오늘 당신도 누군가의 짧은 다리가 되어주세요. 선순환은 생각보다 빠르게 돌아옵니다.",
+    "집중과 휴식의 리듬이 잘 맞는 날. 45분 집중 + 10분 휴식처럼 리듬을 고정하면 성과가 또렷하게 보입니다.",
+    "감정의 결이 부드러워지는 날입니다. 서두르기보다 천천히, 단단하게 한 걸음. 그 속도가 오늘의 최적 속도예요.",
+    "오랜 숙제의 방향이 보이는 날. 다 끝내려 하지 말고 ‘핵심 20%’부터 꺼내세요. 시작이 절반 이상을 밀어줍니다.",
+    "오늘은 말보다 행동이 설득력을 가집니다. 작게라도 눈에 보이는 변화를 만들어 보세요. 주변의 신뢰도 함께 올라갑니다.",
+    "의외의 곳에서 영감이 옵니다. 보던 길을 한 블록만 바꿔 걸어도 충분해요. 낯선 길의 공기가 생각을 환기합니다.",
+    "도전을 시작하기 좋은 날. 완벽한 준비보다 가벼운 실행이 더 멀리 갑니다. 오늘의 ‘시작’이 내일의 ‘지속’을 부릅니다.",
+    "마음이 예민해지기 쉬운 날엔, 나를 가장 안정시키는 작은 루틴을 꺼내세요. 그 루틴이 튼튼한 방파제가 됩니다.",
+    "협업 운이 좋은 날입니다. 혼자보다 함께할 때 속도가 붙습니다. 도움을 요청하는 용기가 결과를 앞당깁니다.",
+    "오늘의 키워드는 ‘정리’. 책상, 핸드폰 앨범, 생각 메모 한 줄만 정리해도 머릿속 공간이 넓어집니다.",
+    "작은 칭찬이 큰 에너지가 됩니다. 스스로에게도, 주변에게도 한 마디의 칭찬을 건네보세요. 분위기가 달라집니다.",
+    "일의 순서를 재배치해 보세요. ‘쉬운 것 → 어려운 것’ 아니면 ‘어려운 것 한 개 → 쉬운 것 여러 개’가 특히 잘 맞습니다.",
+    "운동 운이 좋은 날. 20분만 몸을 움직여도 머리가 가볍게 맑아집니다. 가벼운 땀이 오늘의 집중력을 선물합니다.",
+    "불필요한 걱정을 덜어낼 때입니다. 확인 가능한 것만 확인하고, 나머지는 내려놓으세요. 오늘은 ‘선택과 집중’이 답입니다.",
+    "정보가 모이고 정리되는 날. 흩어진 링크, 스크린샷을 한 폴더에 모아두면 내일의 나가 크게 고마워할 거예요.",
+    "배우고 싶은 것이 보이는 날. 검색 한 번, 튜토리얼 1편만 봐도 충분한 출발이 됩니다. 작은 시작이 곧 동력이 됩니다.",
+    "주변 정리가 운세를 끌어올립니다. 컵 하나 씻고, 메모 한 장 버리고, 택배 상자 하나 접는 것부터.",
+    "대화 운이 트입니다. 솔직하되 부드럽게 말하면 상대의 마음도 자연스레 열립니다.",
+    "목표를 숫자로 바꿔보세요. ‘대충’이 ‘하루 15분’이 되는 순간 실행률이 급격히 올라갑니다.",
+    "오늘은 휴식이 곧 작업입니다. 쉬는 시간을 일정에 적어 넣는 것만으로도 생산성이 살아납니다.",
+    "기회가 사람을 통해 들어옵니다. 오랜만의 안부 인사가 의외의 연결을 만듭니다.",
+    "리듬을 바꾸면 결과가 바뀝니다. 평소와 다른 시간에 시작해 보세요—작은 차이가 큰 변화를 만듭니다.",
+    "과감히 NO라고 말해도 괜찮은 날. 나를 지키는 선택이 길게 보면 모두에게 이롭습니다.",
+    "감사 일기를 쓰기 좋은 날. 세 가지를 적어보면 마음의 안쪽이 따뜻해집니다.",
+    "작업 공간의 조명이 성과를 좌우합니다. 자연광에 가까운 빛으로 바꿔보세요.",
+    "배움의 문장을 소리 내어 읽어보세요. 입으로 지나갈 때 더 오래 남습니다.",
+    "오늘의 행운은 ‘정직함’에서 옵니다. 결과가 느려 보여도 탄탄히 쌓입니다.",
+    "지나친 비교는 에너지를 떨어뜨립니다. 어제의 나와만 비교해 보세요.",
+    "작은 선물이 행운을 부릅니다. 커피 한 잔, 따뜻한 메시지 한 줄이면 충분해요.",
+    "불확실함을 두려워하지 마세요. 해보면 생각보다 어렵지 않다는 걸 알게 됩니다.",
+    "오늘의 키워드: 꾸준함. 조금씩이라도 계속하면, 곧 숫자가 말을 합니다.",
+    "가끔은 우회가 지름길입니다. 돌아가는 길에서 더 좋은 풍경을 만나게 됩니다."
   ];
+
   const directions = ["동쪽","서쪽","남쪽","북쪽","동남쪽","서남쪽","동북쪽","서북쪽"];
   const colors = ["말차 포레스트","로즈 핑크","피치 오렌지","바닐라 크림","하늘 민트","초코 브라운"];
   const foods  = ["소갈비","파스타","마카롱","연어샐러드","김치볶음밥","크루아상"];
   const drinks = [
-    {name:"디카페인 핑크카페라떼", img:"https://picsum.photos/seed/pink/200", note:"부담 없이 달콤하게"},
-    {name:"말차 크림라떼", img:"https://picsum.photos/seed/matcha/200", note:"부드럽고 진하게"},
-    {name:"자몽에이드", img:"https://picsum.photos/seed/grapefruit/200", note:"상큼하게 리프레시"},
-    {name:"헤이즐넛 라떼", img:"https://picsum.photos/seed/hazel/200", note:"고소한 데일리"},
-    {name:"바닐라 콜드브루", img:"https://picsum.photos/seed/vanilla/200", note:"깔끔한 여운"},
-    {name:"초코 브라우니 프라페", img:"https://picsum.photos/seed/choco/200", note:"진한 당충전"}
+    {name:"디카페인 핑크카페라떼", img:"https://picsum.photos/seed/pink/240", note:"부담 없이 달콤하게"},
+    {name:"말차 크림라떼", img:"https://picsum.photos/seed/matcha/240", note:"고소하고 부드럽게"},
+    {name:"자몽에이드", img:"https://picsum.photos/seed/grapefruit/240", note:"상큼하게 리프레시"},
+    {name:"헤이즐넛 라떼", img:"https://picsum.photos/seed/hazel/240", note:"고소한 데일리 컵"},
+    {name:"바닐라 콜드브루", img:"https://picsum.photos/seed/vanilla/240", note:"깔끔한 여운"},
+    {name:"초코 브라우니 프라페", img:"https://picsum.photos/seed/choco/240", note:"진한 당충전"}
   ];
 
-  // --- 해시 & 난수 (지점코드 + 날짜 기반 ⇒ 모두에게 같은 결과) ---
-  function strHash(s){
-    let h=2166136261>>>0;
-    for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=(h*16777619)>>>0; }
-    return h>>>0;
-  }
-  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; } }
-  const seed = strHash(`${shop}|${todayStr}`);
+  // --- 해시/난수 & 모드 ---
+  function strHash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0;}return h>>>0;}
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  const baseSeed = `${shop}|${todayStr}` + (useShuffle ? `|${Math.random()}` : '');
+  const seed = strHash(baseSeed);
   const rand = mulberry32(seed);
   const pick = arr => arr[Math.floor(rand()*arr.length)];
   const randInt = (min,max)=> Math.floor(rand()*(max-min+1))+min;
+
+  // 확인코드는 하루 고정(섞기 모드와 무관)
+  const stableSeed = strHash(`${shop}|${todayStr}`);
+  const dailyCode = String((stableSeed % 1000000 + 1000000) % 1000000).padStart(6,'0');
 
   // --- 결과 생성 ---
   const fortune = pick(fortunes);
@@ -120,22 +187,14 @@
     {label:"학업", val: randInt(60,95)},
     {label:"건강", val: randInt(70,99)},
   ];
-  const kw = {
-    number: randInt(1,9),
-    dir: pick(directions),
-    color: pick(colors),
-    food: pick(foods)
-  };
+  const kw = { number: randInt(1,9), dir: pick(directions), color: pick(colors), food: pick(foods) };
   const drink = pick(drinks);
 
-  // --- 3일 유효일 계산 ---
-  const valid = new Date(Date.UTC(yyyy, Number(mm)-1, Number(dd))); // KST 자정 기준
+  // --- 3일 유효일 ---
+  const valid = new Date(Date.UTC(yyyy, Number(mm)-1, Number(dd)));
   valid.setUTCDate(valid.getUTCDate()+3);
   const vyyyy=valid.getUTCFullYear(), vmm=String(valid.getUTCMonth()+1).padStart(2,'0'), vdd=String(valid.getUTCDate()).padStart(2,'0');
   const validStr = `${vyyyy}-${vmm}-${vdd}`;
-
-  // --- 일일 확인코드(6자리) : 날짜+지점 기반 ---
-  const dailyCode = String((seed % 1000000 + 1000000) % 1000000).padStart(6,'0');
 
   // --- 렌더 ---
   document.getElementById('fortuneText').textContent = fortune;
@@ -152,7 +211,7 @@
   document.getElementById('nowKST').textContent =
     `${todayStr} ${String(nowKST.getUTCHours()).padStart(2,'0')}:${String(nowKST.getUTCMinutes()).padStart(2,'0')}:${String(nowKST.getUTCSeconds()).padStart(2,'0')} (KST)`;
 
-  // --- 점수 바 출력 ---
+  // 점수 바
   const holder = document.getElementById('scores');
   scores.forEach(s=>{
     const row = document.createElement('div'); row.className='row';
@@ -161,6 +220,19 @@
     const fill = document.createElement('div'); fill.className='fill'; fill.style.width=`${s.val}%`;
     bar.appendChild(fill);
     holder.appendChild(row); holder.appendChild(bar);
+  });
+
+  // 공유 버튼 (Web Share → 복사)
+  const shareBtn = document.getElementById('shareBtn');
+  const shareUrl = location.href;
+  const shareText = `현재의 공간 오늘의 운세 ✨\n확인코드: ${dailyCode}\n유효기간: ${validStr} 23:59\n${shareUrl}`;
+  shareBtn.addEventListener('click', async ()=>{
+    if (navigator.share) {
+      try{ await navigator.share({ title:"현재의 공간 — 오늘의 운세", text:shareText, url:shareUrl }); }catch(e){}
+    } else {
+      try{ await navigator.clipboard.writeText(shareText); shareBtn.textContent="링크 복사 완료"; setTimeout(()=>shareBtn.textContent="공유하기",1200); }
+      catch{ alert("공유가 지원되지 않는 환경입니다.\n아래 주소를 복사해 주세요:\n\n"+shareUrl); }
+    }
   });
 })();
 </script>
