@@ -3,344 +3,909 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>현재의 공간 — 봄의 운세 & 망고 행운 음료</title>
+<title>현재의 공간 — 여름의 운세 & 오늘의 음료</title>
+
+<!-- Tailwind CSS 로드 -->
+<script src="https://cdn.tailwindcss.com"></script>
 
 <!-- Pretendard 폰트 -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
 
+<!-- FontAwesome 아이콘 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <style>
   :root {
-    --bg: #ffffff; --card: #ffffff; --ink: #1f2937; --muted: #6b7280;
-    --accent: #16a34a; --accent-3: #d1fae5; --chip: #f3f4f6; --chip-text: #374151;
-    --border: #e5e7eb; --shadow: 0 8px 28px rgba(0,0,0,.07); --radius: 18px;
-    --mango: #fbbf24;
+    --bg-grad-start: #f0fdfa; /* Mint-tinted light background */
+    --bg-grad-end: #e0f2fe;   /* Blue-tinted light background */
+    --plum-primary: #e11d48;  /* Deep vibrant plum red */
+    --plum-light: #ffe4e6;    /* Soft plum rose */
+    --blue-accent: #2563eb;   /* Clear summer blue */
+    --mint-accent: #10b981;   /* Fresh summer mint */
   }
-  * { box-sizing: border-box; }
+
+  * { 
+    box-sizing: border-box; 
+    font-family: Pretendard, system-ui, -apple-system, sans-serif;
+  }
+
   body {
-    font-family: Pretendard, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-    background: var(--bg); color: var(--ink); margin: 0;
+    background: linear-gradient(135deg, var(--bg-grad-start), var(--bg-grad-end));
+    color: #1f2937;
+    margin: 0;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
   }
-  .wrap { max-width: 680px; margin: 0 auto; padding: 24px 18px 32px; }
-  
-  /* 브랜드 영역 */
-  .brand { display: flex; align-items: center; gap: 12px; margin: 6px 0 18px; }
-  .brand img { width: 42px; height: 42px; object-fit: cover; border-radius: 10px; box-shadow: var(--shadow); background: #f3f4f6; }
-  .brand h1 { font-size: 18px; margin: 0; font-weight: 700; letter-spacing: .3px; }
 
-  /* 카드 공통 */
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin: 16px 0; border: 1px solid var(--border); position: relative; overflow: hidden; }
-  .title { font-size: 22px; margin: 0 0 6px; font-weight: 800; word-break: keep-all; }
-  .desc { color: var(--muted); line-height: 1.65; margin: 4px 0 0; word-break: keep-all; }
+  /* 백그라운드 버블 & 나뭇잎 애니메이션 */
+  .bubble-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
 
-  .section-title { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  
-  /* 칩(뱃지) 스타일 */
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-  .chip { background: var(--chip); color: var(--chip-text); padding: 6px 10px; border-radius: 999px; font-size: 12px; }
-  .chip .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; font-weight: 600; }
-  .hint { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .bubble {
+    position: absolute;
+    bottom: -50px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: floatUp 8s infinite ease-in-out;
+  }
 
-  /* 점수, 키워드 행 */
-  .row { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; }
-  .left { display: flex; align-items: center; gap: 10px; }
-  .ico { font-size: 18px; width: 22px; text-align: center; }
+  .leaf {
+    position: absolute;
+    top: -60px;
+    background: rgba(16, 185, 129, 0.18);
+    border-radius: 0 100% 0 100%;
+    transform: rotate(45deg);
+    animation: leafFall 10s infinite linear;
+    filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.1));
+  }
 
-  /* 점수 바 */
-  .bar { height: 10px; background: var(--accent-3); border-radius: 999px; overflow: hidden; margin-top: 6px; }
-  .fill { height: 100%; background: var(--accent); transition: width 1s ease-out; width: 0; }
+  @keyframes floatUp {
+    0% {
+      transform: translateY(0) translateX(0) scale(0.6);
+      opacity: 0;
+    }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% {
+      transform: translateY(-110vh) translateX(50px) scale(1.2);
+      opacity: 0;
+    }
+  }
 
-  /* 키워드 알약 */
-  .pill { display: inline-flex; align-items: center; gap: 8px; background: #111827; color: #fff; border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 500; }
-  .color-pill { background: #111827; }
-  .swatch { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(255,255,255,.5); display: inline-block; }
+  @keyframes leafFall {
+    0% {
+      transform: translateY(0) translateX(0) rotate(0deg);
+      opacity: 0;
+    }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.8; }
+    100% {
+      transform: translateY(115vh) translateX(-150px) rotate(360deg);
+      opacity: 0;
+    }
+  }
 
-  /* 음료 섹션 */
-  .drink { display: flex; gap: 14px; align-items: center; margin-top: 12px; }
-  .drink img { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; background: #f3f4f6; box-shadow: var(--shadow); flex-shrink: 0; }
-  .drink .name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-  .drink .note { color: var(--muted); font-size: 13px; word-break: keep-all; }
+  /* 유리 질감 글래스모피즘 */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 
+                0 4px 12px -2px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-  /* 하단 */
-  .foot { font-size: 12px; color: var(--muted); text-align: center; margin-top: 24px; line-height: 1.5; }
-  .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; }
+  .glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+  }
 
-  /* 버튼 */
-  .btn { appearance: none; border: 0; background: var(--accent); color: #fff; border-radius: 12px; padding: 10px 14px; font-weight: 700; cursor: pointer; box-shadow: var(--shadow); font-size: 13px; white-space: nowrap; }
-  .btn:active { transform: translateY(1px); opacity: 0.9; }
+  /* 행운 지수 그라데이션 커스텀 바 */
+  .progress-bar-container {
+    height: 12px;
+    background: rgba(15, 23, 42, 0.06);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
 
-  /* 안내 박스 */
-  .notice { display: flex; gap: 10px; align-items: flex-start; background: #ecfdf5; border: 1px dashed var(--accent); color: #065f46; padding: 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; word-break: keep-all; }
+  .progress-bar-fill {
+    height: 100%;
+    /* 청량한 블루와 상큼한 민트의 자연스러운 조화 */
+    background: linear-gradient(90deg, #2563eb, #38bdf8, #10b981);
+    background-size: 200% 100%;
+    animation: gradientShift 4s ease infinite;
+    border-radius: 999px;
+    width: 0%;
+    transition: width 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+  }
 
-  /* 메시지 박스 커스텀 */
-  #msgBox {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-    background: #333; color: #fff; padding: 10px 20px; border-radius: 8px;
-    font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100;
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* 컵 흔들기 셔플 애니메이션 */
+  @keyframes cupShake {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    15% { transform: rotate(-10deg) scale(1.05); }
+    30% { transform: rotate(12deg) scale(1.05); }
+    45% { transform: rotate(-8deg) scale(1.03); }
+    60% { transform: rotate(10deg) scale(1.03); }
+    75% { transform: rotate(-4deg) scale(1.01); }
+    90% { transform: rotate(4deg) scale(1.01); }
+  }
+
+  .shake-active {
+    animation: cupShake 0.75s ease-in-out;
+  }
+
+  /* 부드러운 텍스트 페이드인 */
+  .fade-text {
+    animation: textAppear 0.5s ease-out forwards;
+  }
+
+  @keyframes textAppear {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 </style>
 </head>
-<body>
-<div id="msgBox">복사되었습니다.</div>
-<div class="wrap">
-  <!-- 상단 로고 + 브랜드 네임 -->
-  <div class="brand">
-    <img src="logo.jpg" alt="로고" onerror="this.style.opacity=0.5">
-    <h1>Present coffee</h1>
+<body class="p-4 md:p-8 flex flex-col items-center justify-start">
+
+  <!-- 뒷배경 애니메이션 입자 공급기 -->
+  <div class="bubble-container" id="bubbleContainer"></div>
+
+  <!-- 메인 프레임워크 래퍼 -->
+  <div class="w-full max-w-xl z-10 relative">
+
+    <!-- 상단 브랜드 헤더 영역 -->
+    <header class="flex items-center justify-between mb-6 px-1">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 bg-rose-500 rounded-2xl flex items-center justify-center text-white shadow-md shadow-rose-200">
+          <i class="fa-solid fa-mug-hot text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xs font-semibold uppercase tracking-wider text-slate-500">Present Coffee</h1>
+          <p class="text-lg font-extrabold text-slate-800 tracking-tight">현재의 공간 <span class="text-rose-500 text-sm font-normal">SUMMER</span></p>
+        </div>
+      </div>
+      
+      <!-- 실시간 리셔플(재시도) 버튼 -->
+      <button id="shuffleBtn" class="flex items-center gap-1.5 px-3.5 py-2 bg-white/80 hover:bg-white text-xs font-bold text-slate-700 rounded-full border border-slate-200 shadow-sm transition-all hover:scale-105 active:scale-95">
+        <i class="fa-solid fa-rotate-right text-rose-500"></i>
+        <span>새로운 여름운세</span>
+      </button>
+    </header>
+
+    <!-- 메인 카드 1: 여름의 운세 -->
+    <section class="glass-card rounded-[28px] p-6 mb-5 relative overflow-hidden">
+      <!-- 시즌 테마 라벨 -->
+      <div class="absolute top-0 right-0 bg-gradient-to-l from-rose-500 to-amber-500 text-white text-[10px] font-extrabold px-4 py-1.5 rounded-bl-2xl uppercase tracking-widest shadow-sm">
+        Summer Season
+      </div>
+
+      <div class="flex flex-col gap-4">
+        <div>
+          <span class="text-xs font-extrabold tracking-widest text-rose-500 uppercase bg-rose-50 px-2 py-1 rounded-md">TODAY'S ORACLE</span>
+          <h2 class="text-2xl font-black text-slate-800 mt-2">여름의 운세</h2>
+        </div>
+
+        <!-- 운세 원문 -->
+        <p id="fortuneText" class="text-slate-600 leading-relaxed text-[15px] font-medium word-break-keep-all whitespace-pre-line bg-white/50 p-5 rounded-2xl border border-white/80 shadow-inner min-h-[120px] flex items-center">
+          여름날의 특별한 메시지를 불러오는 중입니다...
+        </p>
+
+        <!-- 정보성 칩 및 공유하기 -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div class="flex flex-wrap gap-2">
+            <div class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200/50">
+              유효기간 <span id="validUntil" class="font-mono text-rose-500 font-bold ml-1"></span>
+            </div>
+            <div class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200/50">
+              확인코드 <span id="dailyCode" class="font-mono text-indigo-600 font-bold ml-1"></span>
+            </div>
+          </div>
+
+          <button id="shareBtn" class="bg-gradient-to-r from-rose-500 to-pink-500 text-white hover:opacity-95 px-4 py-2.5 rounded-full text-xs font-extrabold shadow-md shadow-rose-200 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+            <span>운세 공유</span>
+          </button>
+        </div>
+
+        <p class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+          <i class="fa-solid fa-circle-info text-rose-400"></i>
+          <span>본 화면 캡처본 지참 시 <b>3일 이내</b> 오프라인 매장에서 우대 적용됩니다.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- 메인 카드 2: 나의 오늘 행운 지수 -->
+    <section class="glass-card rounded-[28px] p-6 mb-5">
+      <div class="flex items-center gap-2 mb-5">
+        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+          <i class="fa-solid fa-chart-line text-sm"></i>
+        </div>
+        <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">나의 오늘 행운 지수</h2>
+      </div>
+
+      <!-- 동적으로 랜더링될 점수 게이지바 그룹 -->
+      <div id="scores" class="space-y-4">
+        <!-- JS로 블루 & 민트 그라데이션 레이아웃 삽입 -->
+      </div>
+    </section>
+
+    <!-- 메인 카드 3: 여름의 행운 키워드 -->
+    <section class="glass-card rounded-[28px] p-6 mb-5">
+      <div class="flex items-center gap-2 mb-5">
+        <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+          <i class="fa-solid fa-key text-sm"></i>
+        </div>
+        <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">여름의 행운 키워드</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <!-- 행운의 숫자 -->
+        <div class="flex items-center justify-between p-3.5 bg-white/60 rounded-2xl border border-slate-100">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">🎟️</span>
+            <span class="text-sm font-bold text-slate-600">행운의 숫자</span>
+          </div>
+          <span id="kwNumber" class="text-sm font-extrabold bg-slate-900 text-white px-3 py-1.5 rounded-full min-w-[36px] text-center">7</span>
+        </div>
+
+        <!-- 방향 -->
+        <div class="flex items-center justify-between p-3.5 bg-white/60 rounded-2xl border border-slate-100">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">🧭</span>
+            <span class="text-sm font-bold text-slate-600">행운의 방향</span>
+          </div>
+          <span id="kwDir" class="text-sm font-extrabold bg-slate-900 text-white px-4 py-1.5 rounded-full">동남쪽</span>
+        </div>
+
+        <!-- 컬러 -->
+        <div class="flex items-center justify-between p-3.5 bg-white/60 rounded-2xl border border-slate-100">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">🎨</span>
+            <span class="text-sm font-bold text-slate-600">행운의 컬러</span>
+          </div>
+          <div id="kwColor" class="flex items-center gap-1.5 bg-slate-900 text-white px-3.5 py-1.5 rounded-full text-xs font-bold">
+            <!-- JS 동적 컬러 팔레트 렌더링 -->
+          </div>
+        </div>
+
+        <!-- 디저트 음식 -->
+        <div class="flex items-center justify-between p-3.5 bg-white/60 rounded-2xl border border-slate-100">
+          <div class="flex items-center gap-2.5">
+            <span class="text-2xl">🍧</span>
+            <span class="text-sm font-bold text-slate-600">추천 디저트</span>
+          </div>
+          <span id="kwFood" class="text-sm font-extrabold bg-slate-900 text-white px-4 py-1.5 rounded-full">자두소르베</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 메인 카드 4: 오늘의 음료 -->
+    <section class="glass-card rounded-[28px] p-6 mb-8 relative">
+      <div class="flex items-center gap-2 mb-5">
+        <div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
+          <i class="fa-solid fa-whiskey-glass text-sm"></i>
+        </div>
+        <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">오늘의 음료</h2>
+      </div>
+
+      <!-- 시그니처 음료 상세 컨테이너 -->
+      <div class="flex flex-col sm:flex-row items-center gap-6 bg-gradient-to-br from-rose-50/50 to-orange-50/50 p-5 rounded-3xl border border-rose-100/40 shadow-inner">
+        <!-- SVG 프레임 (동적 렌더링) -->
+        <div class="w-28 h-28 flex-shrink-0 flex items-center justify-center bg-white/90 rounded-2xl shadow-md border border-rose-100" id="drinkImgContainer">
+          <!-- JS에서 동적 고퀄리티 SVG 음료 삽입 -->
+        </div>
+
+        <div class="text-center sm:text-left flex-1">
+          <span class="text-[10px] font-extrabold tracking-widest text-rose-500 uppercase bg-rose-100 px-2 py-0.5 rounded">Today's Choice</span>
+          <h3 id="drinkName" class="text-2xl font-black text-slate-800 mt-1.5 mb-2">자두에이드</h3>
+          <p id="drinkNote" class="text-slate-500 text-sm leading-relaxed font-medium word-break-keep-all">
+            상큼 달콤한 자두 생과육과 시원한 탄산이 만나 짜릿한 청량감을 주는 스파클링 에이드
+          </p>
+        </div>
+      </div>
+
+      <!-- 스페셜 오프라인 프로모션 안내 박스 -->
+      <div class="mt-4 bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/60 p-4 rounded-2xl flex gap-3.5 items-start">
+        <span class="text-2xl mt-0.5">🏖️</span>
+        <div class="text-xs text-teal-800 leading-relaxed font-medium">
+          <p class="font-extrabold text-sm text-teal-950 mb-0.5">캡처 화면 제시 시 해당 추천 음료 1,000원 즉시 할인</p>
+          <span>사용 기한: <span id="validUntil2" class="font-bold underline text-rose-600"></span> 23:59까지 · 일일 코드 대조 시 사용 가능</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 하단 라이선스 및 시간 메타 정보 -->
+    <footer class="text-center text-slate-400 text-xs pb-12 space-y-1 font-medium">
+      <p>페이지 생성 시각 (KST): <span id="nowKST" class="font-bold text-slate-500"></span></p>
+      <p>지점 고유식별 캠페인 코드: <span id="shopId" class="font-mono text-slate-600 bg-slate-200/50 px-2 py-0.5 rounded-md"></span></p>
+    </footer>
+
   </div>
+
+  <!-- 토스트 알림창 디자인 구현 -->
+  <div id="toastBox" class="fixed bottom-6 left-1/2 -translate-x-1/2 transform bg-slate-900/95 text-white text-xs font-bold px-6 py-3.5 rounded-full shadow-xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-rose-400"></i>
+    <span id="toastText">클립보드에 복사되었습니다.</span>
+  </div>
+
+  <script>
+  (function(){
+    const nowUTC = new Date();
+    const nowKST = new Date(nowUTC.getTime() + 9*60*60*1000);
+    const yyyy = nowKST.getUTCFullYear();
+    const mm = String(nowKST.getUTCMonth()+1).padStart(2,'0');
+    const dd = String(nowKST.getUTCDate()).padStart(2,'0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+
+    // ---- URL 인스턴스 파라미터 제어 ----
+    const params = new URLSearchParams(location.search);
+    const shop = (params.get('id') || 'signature_summer').toLowerCase();
+    const useShuffle = (params.get('mode') === 'shuffle');
+
+    // ---- 백그라운드 파티클 자동 생성기 (풍성한 여름 숲 비주얼) ----
+    const container = document.getElementById('bubbleContainer');
+    const particleColors = ['rgba(255,255,255,0.5)', 'rgba(254,228,230,0.4)', 'rgba(224,242,254,0.4)'];
     
-  <!-- 운세 -->
-  <div class="card">
-    <div class="section-title">
-      <div>
-        <div class="title">봄의 운세</div>
-        <div id="fortuneText" class="desc">운세를 불러오는 중...</div>
-      </div>
-      <button id="shareBtn" class="btn">공유하기</button>
-    </div>
-    <div class="chips">
-      <div class="chip">유효기간 <span id="validUntil" class="mono"></span></div>
-      <div class="chip">확인코드 <span id="dailyCode" class="mono"></span></div>
-    </div>
-    <div class="hint">* 화면 캡처 지참 시 <b>3일 이내</b> 사용 가능</div>
-  </div>
-
-  <!-- 점수 (초록색 바) -->
-  <div class="card">
-    <div class="title">나의 행운 지수</div>
-    <div id="scores"></div>
-  </div>
-
-  <!-- 행운 키워드 -->
-  <div class="card">
-    <div class="title">봄의 행운 키워드</div>
-
-    <div class="row">
-      <div class="left"><span class="ico">🎟️</span><div>행운의 숫자</div></div>
-      <div id="kwNumber" class="pill"></div>
-    </div>
-
-    <div class="row">
-      <div class="left"><span class="ico">🧭</span><div>방향</div></div>
-      <div id="kwDir" class="pill"></div>
-    </div>
-
-    <div class="row">
-      <div class="left"><span class="ico">🎨</span><div>컬러</div></div>
-      <div id="kwColor" class="pill color-pill"></div>
-    </div>
-
-    <div class="row">
-      <div class="left"><span class="ico">🍽️</span><div>추천 음식</div></div>
-      <div id="kwFood" class="pill"></div>
-    </div>
-  </div>
-
-  <!-- 오늘의 행운 음료 -->
-  <div class="card">
-    <div class="title">오늘의 행운 음료</div>
-    <div class="drink">
-      <img id="drinkImg" alt="drink" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSIjZTVlN2ViIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIvPjwvc3ZnPg=='"/>
-      <div>
-        <div id="drinkName" class="name"></div>
-        <div id="drinkNote" class="note"></div>
-      </div>
-    </div>
-
-    <div class="notice" style="margin-top:14px;">
-      <div>☕</div>
-      <div>
-        <b>캡처 제시 시 추천 음료 1,000원 할인</b><br>
-        (사용기한: <span id="validUntil2"></span> 23:59까지 · 코드 일치 시)
-      </div>
-    </div>
-  </div>
-
-  <div class="foot">
-    페이지 생성 (KST): <span id="nowKST"></span><br/>
-    지점/캠페인: <span id="shopId" class="code"></span>
-  </div>
-</div>
-
-<script>
-(function(){
-  // ---- KST 시간 설정 ----
-  const nowUTC = new Date();
-  const nowKST = new Date(nowUTC.getTime() + 9*60*60*1000);
-  const yyyy = nowKST.getUTCFullYear();
-  const mm = String(nowKST.getUTCMonth()+1).padStart(2,'0');
-  const dd = String(nowKST.getUTCDate()).padStart(2,'0');
-  const todayStr = `${yyyy}-${mm}-${dd}`;
-
-  // ---- URL 파라미터 ----
-  const params = new URLSearchParams(location.search);
-  const shop = (params.get('id') || 'default').toLowerCase();
-  const useShuffle = (params.get('mode') === 'shuffle');
-
-  // ---- 봄의 운세 데이터 ----
-  const fortunes = [
-    "얼어붙었던 땅에서 새싹이 돋아나듯, 오랫동안 고민하던 일에 실마리가 풀리기 시작합니다. 당신의 작은 시도가 예상치 못한 봄바람을 타고 큰 행운으로 돌아옵니다. 오늘 마시는 커피 한 잔은 당신의 열정에 온기를 더해줄 거예요.",
-    "봄볕이 창가를 환하게 비추는 날입니다. 새로운 일을 시작하기에 이보다 더 좋은 날은 없어요. 완벽하게 준비되지 않았더라도 괜찮습니다. 일단 한 걸음을 내딛는 것만으로도 당신의 에너지는 선명하게 흐르기 시작합니다.",
-    "살랑이는 봄바람이 기분 좋은 소식을 물어옵니다. 멀리서 들려오는 반가운 안부나 잊고 지냈던 인연으로부터 연락이 올 수 있습니다. 대화의 끝에 행운의 단서가 숨어 있으니 귀를 기울여 보세요.",
-    "목련꽃이 피어나듯 당신의 아이디어가 드디어 빛을 발하기 시작합니다. 회의나 미팅에서 주저하지 말고 당신의 의견을 꺼내 보세요. 조심스럽지만 단단한 당신의 목소리에 사람들이 공감하기 시작합니다.",
-    "나른한 봄날 오후의 기운을 깨워줄 신선한 에너지가 필요합니다. 늘 가던 길이 아닌 새로운 골목으로 발걸음을 옮겨 보세요. 우연히 발견한 작은 소품이나 풍경이 당신에게 새로운 영감을 선물합니다.",
-    "꽃샘추위가 지나가고 완연한 봄이 오듯, 당신의 노력을 가로막던 장애물들이 자연스럽게 사라집니다. 지금은 속도를 내기보다 방향을 다시 한 번 점검할 때입니다. 봄은 서두르지 않아도 결국 만개합니다.",
-    "오늘은 나 자신을 위한 선물을 준비하기에 좋은 날입니다. 맛있는 디저트나 읽고 싶었던 책 한 권으로 마음을 채워보세요. 스스로를 돌볼 줄 아는 사람에게 행운은 더 머물고 싶어 합니다.",
-    "봄비가 대지를 적시듯 당신의 진심 어린 한마디가 누군가의 마음을 촉촉하게 적십니다. 갈등이 있었다면 오늘이 화해의 적기입니다. 먼저 손을 내미는 용기가 당신의 가치를 더욱 높여줄 것입니다.",
-    "꽃잎이 흩날리는 풍경처럼 생각지 못한 소소한 기쁨들이 하루 곳곳에 숨어 있습니다. 우연히 듣게 된 노래 가사가 당신의 고민에 해답을 줄지도 모릅니다. 오늘은 감각을 열어두고 세상을 관찰해 보세요.",
-    "나비가 꽃을 찾아 날아들듯 사람과 기회가 당신 주변으로 모여듭니다. 활기찬 에너지가 넘치는 날이니 외향적인 활동을 즐겨보세요. 여러 사람과 의견을 나누는 과정에서 당신의 독창성이 더욱 돋보이게 됩니다."
-    // ... (이전의 운세 데이터 61개 유지)
-  ];
-  // 61개의 전문이 생략되어 보일 수 있으나 코드상에는 충분히 존재하도록 구성 (기존 리스트 그대로 사용)
-
-  // ---- 키워드/음료 ----
-  const directions = ["동쪽","서쪽","남쪽","북쪽","동남쪽","서남쪽","동북쪽","서북쪽"];
-  const colorOptions = [
-    {key:"mango",  name:"망고 옐로우",   hex:"#fbbf24"},
-    {key:"grass",  name:"그래스 그린",   hex:"#4ade80"},
-    {key:"sakura", name:"사쿠라 핑크",   hex:"#fecdd3"},
-    {key:"sky",    name:"스카이 블루",   hex:"#7dd3fc"},
-    {key:"lavender",name:"라벤더 퍼플",  hex:"#e8d5ff"},
-    {key:"lemon",  name:"레몬 쉬폰",     hex:"#fef9c3"}
-  ];
-  const foods = [
-    "망고빙수", "블루베리케이크", "자몽케이크", "망고케이크", "크루아상",
-    "치즈케이크", "샌드위치","과일 타르트", "바게트", "스콘"
-  ];
-
-  const drinks = [
-    {name:"아인슈페너",   img:"logo.jpg", note:"부드럽고 쫀득한 크림 뒤에 찾아오는 에스프레소의 깊은 풍미"},
-    {name:"초코라떼",     img:"logo.jpg", note:"진한 초콜릿의 달콤함이 하루의 피로를 사르르 녹여주는 라떼"},
-    {name:"말차라떼",     img:"logo.jpg", note:"차분한 말차의 향과 부드러운 우유가 선사하는 쌉싸름한 조화"},
-    {name:"애플에이드",   img:"logo.jpg", note:"아삭한 사과의 상큼함에 청량한 탄산이 더해진 시원한 에이드"},
-    {name:"애플티",       img:"logo.jpg", note:"사과의 달콤한 향이 온몸으로 퍼지는 따뜻하고 편안한 시간"},
-    {name:"썬셋비치에이드", img:"logo.jpg", note:"노을빛 바다를 담은 화려한 색감과 이국적인 과일의 상큼함"},
-    {name:"망고라떼",     img:"logo.jpg", note:"진한 망고 과육과 부드러운 우유의 달콤한 만남"},
-    {name:"망고우유",     img:"logo.jpg", note:"아이들도 좋아하는 순수하고 진한 망고의 풍미"},
-    {name:"망고쑥우유",   img:"logo.jpg", note:"향긋한 봄 쑥과 달콤한 망고의 이색적이고 건강한 조화"},
-    {name:"망고에이드",   img:"logo.jpg", note:"톡 쏘는 탄산과 상큼한 망고가 만나 갈증을 씻어주는 에이드"},
-    {name:"아메리카노",   img:"logo.jpg", note:"와이니한 향과 깔끔한 산미가 인상적인 아메리카노"},
-    {name:"카페라떼",     img:"logo.jpg", note:"부드러운 우유와 깔끔한 에스프레소가 어우러진 라떼"},
-    {name:"바닐라라떼",   img:"logo.jpg", note:"은은한 바닐라 향이 감도는 달콤하고 부드러운 라떼"},
-    {name:"화분스무디",   img:"logo.jpg", note:"초코 크럼블이 토핑된 달콤하고 시원한 디저트 스무디"},
-    {name:"히치아이스티", img:"logo.jpg", note:"상큼한 과일 향과 깔끔한 단맛이 어우러진 아이스티"},
-    {name:"에메랄드에이드", img:"logo.jpg", note:"청량한 색감과 상큼한 맛이 돋보이는 스파클링 에이드"}
-  ];
-
-  // ---- 해시/난수 생성 함수 ----
-  function strHash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h*16777619)>>>0;}return h>>>0;}
-  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-
-  let userId = localStorage.getItem("presentCoffeeUserId");
-  if (!userId) {
-    userId = Math.random().toString(36).slice(2,10);
-    localStorage.setItem("presentCoffeeUserId", userId);
-  }
-  if (useShuffle) userId += "|shuffle|" + Math.random().toString(36).slice(2);
-
-  const makeRand = (label) => mulberry32(strHash(`${shop}|${todayStr}|${userId}|${label}`));
-  const rFortune = makeRand("fortune");
-  const rScore   = makeRand("score");
-  const rKW      = makeRand("kw");
-  const rDrink   = makeRand("drink");
-
-  const pickFrom    = (arr, r) => arr[Math.floor(r()*arr.length)];
-  const randIntFrom = (r,min,max)=> Math.floor(r()*(max-min+1))+min;
-
-  const stableSeed = strHash(`${shop}|${todayStr}`);
-  const dailyCode  = String((stableSeed % 1_000_000 + 1_000_000) % 1_000_000).padStart(6,'0');
-
-  // 데이터 선택
-  const fortune = pickFrom(fortunes, rFortune);
-  const scores = [
-    {label:"금전", val: randIntFrom(rScore, 75, 99)},
-    {label:"성장", val: randIntFrom(rScore, 70, 98)},
-    {label:"애정", val: randIntFrom(rScore, 65, 100)},
-    {label:"인간관계", val: randIntFrom(rScore, 70, 97)},
-    {label:"컨디션", val: randIntFrom(rScore, 75, 99)},
-  ];
-  const kwNumber = randIntFrom(rKW, 1, 9);
-  const kwDir    = pickFrom(directions,   rKW);
-  const kwColor  = pickFrom(colorOptions, rKW);
-  const kwFood   = pickFrom(foods,        rKW);
-  const drink    = pickFrom(drinks,       rDrink);
-
-  // 유효기간 (3일)
-  const valid = new Date(Date.UTC(yyyy, Number(mm)-1, Number(dd)));
-  valid.setUTCDate(valid.getUTCDate()+3);
-  const vyyyy=valid.getUTCFullYear(), vmm=String(valid.getUTCMonth()+1).padStart(2,'0'), vdd=String(valid.getUTCDate()).padStart(2,'0');
-  const validStr = `${vyyyy}-${vmm}-${vdd}`;
-
-  // 렌더링
-  document.getElementById('fortuneText').textContent = fortune;
-  document.getElementById('validUntil').textContent = `${validStr} 23:59`;
-  document.getElementById('validUntil2').textContent = validStr;
-  document.getElementById('dailyCode').textContent = dailyCode;
-  document.getElementById('kwNumber').textContent = kwNumber;
-  document.getElementById('kwDir').textContent    = kwDir;
-
-  const colorEl = document.getElementById('kwColor');
-  colorEl.innerHTML = '';
-  const sw = document.createElement('span'); sw.className='swatch'; sw.style.background = kwColor.hex;
-  const txt = document.createElement('span'); txt.textContent = kwColor.name;
-  colorEl.appendChild(sw); colorEl.appendChild(txt);
-
-  document.getElementById('kwFood').textContent = kwFood;
-  document.getElementById('drinkName').textContent = drink.name;
-  
-  const imgEl = document.getElementById('drinkImg');
-  imgEl.src = drink.img; 
-  imgEl.alt = drink.name;
-  document.getElementById('drinkNote').textContent = drink.note;
-
-  document.getElementById('shopId').textContent = shop;
-  document.getElementById('nowKST').textContent = `${todayStr} ${String(nowKST.getUTCHours()).padStart(2,'0')}:${String(nowKST.getUTCMinutes()).padStart(2,'0')}:${String(nowKST.getUTCSeconds()).padStart(2,'0')} (KST)`;
-
-  // 점수 바 애니메이션
-  const holder = document.getElementById('scores');
-  holder.innerHTML = '';
-  scores.forEach(s=>{
-    const row = document.createElement('div'); row.className='row';
-    row.innerHTML = `<div class="left"><div>${s.label}</div></div><div>${s.val}점</div>`;
-    const bar  = document.createElement('div'); bar.className='bar';
-    const fill = document.createElement('div'); fill.className='fill'; 
-    setTimeout(() => { fill.style.width=`${s.val}%`; }, 100);
-    bar.appendChild(fill);
-    holder.appendChild(row); holder.appendChild(bar);
-  });
-
-  // 메시지 박스
-  const msgBox = document.getElementById('msgBox');
-  function showMsg(txt) {
-    msgBox.textContent = txt;
-    msgBox.style.opacity = 1;
-    setTimeout(() => msgBox.style.opacity = 0, 2000);
-  }
-
-  // 공유/복사 기능
-  const shareBtn = document.getElementById('shareBtn');
-  const shareUrl = location.href;
-  const shareText = `[현재의 공간] 봄의 운세 ✨\n확인코드: ${dailyCode}\n행운의 음료: ${drink.name}\n유효기간: ${validStr} 23:59까지\n${shareUrl}`;
-  
-  shareBtn.addEventListener('click', async ()=>{
-    if (navigator.share) {
-      try { await navigator.share({ title:"현재의 공간 — 봄의 운세", text:shareText, url:shareUrl }); } catch(e){}
-    } else {
-      const tempInput = document.createElement('textarea');
-      tempInput.value = shareText;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try {
-        document.execCommand('copy');
-        showMsg("링크와 운세가 복사되었습니다!");
-      } catch (err) {
-        console.error('fallback copy failed', err);
-      }
-      document.body.removeChild(tempInput);
+    // 탄산 버블 생성 (15개)
+    for (let i = 0; i < 15; i++) {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      const size = Math.random() * 24 + 6;
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.left = `${Math.random() * 100}%`;
+      bubble.style.animationDelay = `${Math.random() * 6}s`;
+      bubble.style.animationDuration = `${Math.random() * 5 + 6}s`;
+      bubble.style.background = particleColors[Math.floor(Math.random() * particleColors.length)];
+      container.appendChild(bubble);
     }
-  });
-})();
-</script>
+
+    // 푸른 잎새 생성 (요청대로 20개로 풍성하게 세팅)
+    for (let i = 0; i < 20; i++) {
+      const leaf = document.createElement('div');
+      leaf.className = 'leaf';
+      const size = Math.random() * 14 + 6;
+      leaf.style.width = `${size}px`;
+      leaf.style.height = `${size * 1.6}px`;
+      leaf.style.left = `${Math.random() * 100}%`;
+      leaf.style.animationDelay = `${Math.random() * 10}s`;
+      leaf.style.animationDuration = `${Math.random() * 8 + 8}s`;
+      container.appendChild(leaf);
+    }
+
+    // 여름날의 깊은 감성을 담은 문학적이고 풍성하게 쓰여진 50가지의 운세 목록
+    const fortunes = [
+      "싱그러운 자두빛 여름 하늘처럼 당신의 온몸과 마음에 생기발랄하고 맑은 에너지가 가득 차오르는 특별한 하루입니다. 그동안 고민하고 망설이며 미뤄왔던 일이나 새롭게 도전하고 싶었던 분야가 있다면, 오늘이야말로 청량한 탄산수처럼 시원한 첫걸음을 내딛기에 가장 완벽한 타이밍입니다. 바람을 타고 흘러드는 상큼하고 달콤한 소식이 당신의 마음속에 설렘의 기분 좋은 파도를 잔잔하게 일으킬 것입니다.",
+      "갑자기 시원하게 쏟아진 소나기가 뜨거웠던 대지를 투명하게 씻어내고 물러간 여름 오후처럼, 당신의 머릿속을 맴돌며 무겁게 누르던 복잡한 고민거리가 명쾌하게 해소될 징조입니다. 구름 사이로 뻗어 나오는 영롱한 무지개 아래에서 오늘은 조금 더 가볍고 여유로운 시선으로 세상을 관찰해 보세요. 생각지 못한 익숙한 거리에서 당신을 오랫동안 기다려온 우연한 행운을 한 조각 마주하게 될 것입니다.",
+      "잔잔한 밤하늘 아래 조용히 밀려왔다 밀려가는 여름 밤바다의 시원하고 투명한 파도 소리처럼, 최근 들어 미묘하게 어긋나 있던 인간관계와 작은 오해들이 막힘없이 흐르는 물처럼 매끄럽게 정리되는 편안한 시기입니다. 먼저 가벼운 안부를 전하며 손을 내미는 다정함이 당신에게 몇 배의 큰 신뢰와 기쁨으로 반사되어 돌아옵니다. 진솔한 마음이 서로에게 깊게 닿아 잊지 못할 한 페이지가 채워집니다.",
+      "눈부신 햇살을 아낌없이 받아 온통 붉고 투명하게 무르익은 여름 자두의 탐스러운 과육처럼, 당신이 오랫동안 갈고닦아 온 매력과 진정성 있는 태도가 최고의 순간에 이르렀습니다. 오늘 예정되어 있는 만남이나 중요한 미팅이 있다면 주저하지 말고 당신만의 독창적이고 반짝이는 개성을 솔직하게 표현해 보세요. 주변 사람들은 당신의 당도 높은 맑은 매력에 매료되어 든든한 지원군을 자처할 것입니다.",
+      "짙푸른 소나무 그늘 아래서 사그라지는 매미 소리와 함께 불어오는 청아한 한 줄기 바람처럼, 머릿속을 가로막고 있던 어려운 문제나 중요한 선택에 명확하고 날카로운 해답이 솟구치게 됩니다. 지나치며 스치는 아주 사소한 아이디어라도 흘려보내지 말고 반드시 메모장에 정갈하게 남겨두도록 하세요. 오늘 가볍게 적은 한 줄의 기록이 먼 훗날 당신의 인생에 엄청난 도약점을 마련해 줄 것입니다.",
+      "이른 새벽 넓은 이파리마다 대롱대롱 맺힌 맑은 이슬처럼 투명하고 정돈된 마음으로 하루를 시작할 수 있는 행운이 찾아왔습니다. 굳이 애써 포장하거나 과한 노력을 기울이지 않아도, 자연의 흐름대로 당신이 공들여 온 소중한 일들이 가장 이로운 방향으로 스르르 정리될 것입니다. 한 템포 가쁜 숨을 가다듬고 현재의 순간을 그 자체로 만끽해 보며 평온함 속에 머물기에 더없이 좋은 날입니다.",
+      "여름 휴가지에서 우연히 발견한 아기자기한 오솔길 표지판처럼, 당신의 오랜 꿈을 조용히 지지해 주던 숨겨진 귀인이나 뜻밖의 동료로부터 반가운 제안을 받게 될 흐름입니다. 평소 다소 낯설고 생소했던 주제일지라도 마음을 열고 차근차근 수용해 보며 대화에 귀를 기울여 보세요. 이 작은 만남이 당신의 한계를 허물어뜨리고 드넓은 세상으로 이끌어 주는 소중한 나침반이 될 것입니다.",
+      "구름 한 점 없는 밤하늘에 끝없이 펼쳐진 은하수 무리가 눈부시게 흩뿌려진 것처럼, 당신의 감수성과 예술적 직관력이 믿기 힘들 정도로 최고조에 달하는 놀라운 날입니다. 평면적인 생각에서 벗어나 감각적인 기획을 구상하거나 창조적인 연구에 몰두할 때 깊이 있는 성과를 거둘 수 있습니다. 평소 좋아하던 잔잔한 음악을 배경 삼아 내면의 예술적 본능을 과감하게 깨워보는 일에 아낌없이 집중해 보세요.",
+      "깊은 숲속 계곡 사이를 굽이굽이 흐르는 맑고 찬물에 발을 담그고 있을 때 맛보는 고요하고 가슴 벅찬 휴식이 당신의 곁에 가만히 머물러 있습니다. 시끌벅적하고 복잡한 세상 소음에서 잠시 귀를 닫고 온전히 스스로의 감정과 신체의 상태를 부드럽게 보살펴 주어야 하는 시기입니다. 쉼표를 찍어가는 영양가 있는 휴식을 통해 당신의 에너지는 한층 더 강력하고 선명하게 가득 충전될 것입니다.",
+      "여름 아침의 선선한 바람이 싱그러운 넝쿨 장미의 향기를 실어 마당 가득 불어오듯, 당신의 숨겨진 재능과 인품이 사람들의 신망을 한 몸에 받는 보람찬 순간을 맞이합니다. 과거에 타인에게 베풀었던 작은 친절과 말 한마디가 은은한 씨앗이 되어 드디어 큰 호의와 감동으로 자라나 당신의 품 안으로 포근하게 안기게 될 것입니다. 기쁜 마음으로 이 수확을 누리고 나누어 보세요.",
+      "초록빛 가득한 산책로를 하염없이 걸어가다 만난 투명하고 깊은 샘터처럼, 메말랐던 당신의 가슴 속에 번뜩이는 지혜와 감수성이 새샘 솟아오르는 감성적인 날입니다. 오랫동안 풀리지 않았던 난해한 공부나 비즈니스적 장벽이, 한 권의 우연한 책이나 친구의 다정한 대화 한마디 덕에 맑게 개어 오를 것입니다. 오늘 하루는 넉넉한 마음의 항아리를 준비해 배움과 감동을 채워 넣어 보십시오.",
+      "여름날 소박하게 불어오는 치자꽃 향기가 은은히 대지에 머물듯이, 당신의 뛰어난 업적이나 따스한 평판이 사방으로 널리 퍼지기 시작합니다. 애써 눈에 띄려 행동하지 않아도 당신만의 차분하고 굳건한 태도가 충분히 매력적인 후광을 만들어낼 것입니다. 정직하고 정성 어린 마음가짐을 유지하기만 한다면, 자연스럽게 당신의 가치를 높이 사 줄 귀인이 기분 좋은 손길을 뻗어올 것입니다.",
+      "더위를 꿋꿋이 이겨내고 하늘을 향해 당당하게 고개를 치켜든 노란 해바라기처럼, 당신의 끈기 있는 노력과 도전 정신이 드디어 눈부신 인정을 받게 되는 성취의 날입니다. 주변의 변덕스러운 의견에 흔들리지 않고 한결같이 지켜온 당신만의 속도가 틀리지 않았음을 증명하는 의미 있는 날입니다. 오늘만큼은 성취의 기쁨을 온전히 축하하며 스스로에게 깊은 지지와 칭찬을 보내주세요.",
+      "한여름 밤 정원 한구석에서 은은하게 비행하며 어둠을 밝혀주는 작고 고귀한 반딧불이처럼, 시간이 깊어갈수록 당신의 숨겨진 가치와 영량이 선명하게 드러나게 됩니다. 요란한 과시보다 묵묵하게 다져온 성실함이 빛을 보게 되는 기특한 순간입니다. 서두르고 초조해할 필요가 전혀 없으니, 오늘 밤에는 당신만의 조용하고 은은한 보석 같은 능력이 빛나도록 시간을 온전히 투자해 보십시오.",
+      "시원한 대청마루 위에 편안하게 누워 달콤하고 시원한 수박을 크게 한 입 베어 물었을 때의 짜릿한 행복처럼, 골치 아팠던 장벽이 사라지고 숨통이 탁 트입니다. 오랫동안 답답하게 지연되던 계약 성사나 미적지근했던 조율 사항이 당신에게 압도적으로 유리한 방향으로 급물살을 타게 될 행운이 찾아왔습니다. 망설임 없이 도장을 찍거나 결단을 확실하게 내려서 기회를 단단하게 거머쥐어 보세요.",
+      "눈이 시리도록 광활하게 펼쳐진 여름 바다 위를 향해 시원하게 흰 돛을 올리고 전진하는 하얀 요트처럼, 거침없는 자신감과 과감한 추진력이 돋보이는 희망적인 날입니다. 마음에 가볍게 품고만 있었던 과감한 계획이 있다면 주저를 멈추고 거친 파도를 넘듯 힘차게 실행해 보세요. 상쾌하게 불어오는 시대의 순풍이 당신의 무대를 넓고 푸른 세계로 힘껏 밀어줄 것입니다.",
+      "맑고 시원한 계곡물이 세차게 떨어지는 폭포수 근처에 누운 듯, 마음을 정화하고 스트레스를 단숨에 날려버릴 깊고 든든한 쉼이 당신의 곁으로 찾아오는 시기입니다. 혹시 무리하게 일정을 소화해 몸이 피로에 지쳐있지는 않은지 정갈하게 살펴보세요. 깊은 단잠을 보충하거나 가벼운 물가 산책을 해보는 사소한 행동만으로도, 온몸의 흐트러졌던 신체적 밸런스가 기적처럼 말끔하게 정돈될 것입니다.",
+      "더운 열기로 가득했던 밤공기를 단번에 식혀주는 차분하고 촉촉한 밤비 소리처럼, 시끄러운 세상 속에서 잠시 물러나 깊이 있는 사색과 내면의 안정을 취하기 적절한 타이밍입니다. 오늘은 너무 성급한 약속이나 행동으로 일정을 가득 채우기보다는, 집 안에서 혼자 조용한 차 한 잔을 마시며 앞으로의 방향을 깊이 고민해 보세요. 정돈된 내면의 공간에서 위대한 시작점이 피어납니다.",
+      "아침 햇살에 조용히 빛나며 초록의 맑은 생기를 내뿜는 이슬 머금은 잎사귀처럼, 연애나 오랜 사교의 관계 속에서 새로운 두근거림과 신뢰가 차오르기 시작합니다. 유난히 상대의 장점이 돋보이고 서로의 마음에 공감하는 지점이 넓어지는 신기한 하루입니다. 아주 거창하고 특별한 데이트 코스가 아닐지라도 가벼운 눈빛 교환과 다정한 말 한마디만으로도 두 사람의 우주는 더없이 깊어질 것입니다.",
+      "여름 산사 가득 맑고 투명하게 울려 퍼지는 풍경 소리가 지친 마음을 위로하듯, 억지로 무언가를 해내려 조바심내지 않아도 마음속에 깃든 답답함이 저절로 씻겨 내려갑니다. 오늘은 흐르는 물에 작은 나뭇잎을 띄워 보내듯 모든 긴장감을 탁 풀어놓은 채 일상의 속도를 늦추고 편안하게 움직여보세요. 자연스러운 여유 속에 숨겨진 해답이 스스로 당신 앞에 환하게 나타나게 될 것입니다.",
+      "새벽녘 여름 안개가 수면 위로 몽환적이고 아늑하게 내려앉듯, 최근 복잡하게 치달았던 갈등 국면이 조용히 수면 아래로 사그라지며 평화로운 기운이 흐르는 날입니다. 시비를 분명하게 가리기보다 부드럽게 감싸 안는 온화한 태도가 결국 당신의 큰 이득과 평판으로 돌아옵니다. 마음의 깊이를 한 뼘 넓혀가는 성숙한 자세가 오늘의 보석입니다.",
+      "끝없이 펼쳐진 수평선 너머로 거침없이 날개를 펼치며 고공 비행하는 갈매기처럼, 아주 새로운 공간으로 이직이나 큰 진출을 모색하기에 더없이 유리한 기운이 돌고 있습니다. 당신의 발걸음을 가로막던 익숙한 안전지대에서 벗어나, 새로운 세상의 넓은 기회들을 담대하게 경험해 보십시오. 두려움 뒤에 숨겨진 엄청난 가능성이 당신을 환대할 준비를 마쳤습니다.",
+      "한여름 뜨겁게 불타오르던 붉은 서녘 하늘이 신비로운 보랏빛으로 우아하게 흘러가듯, 당신의 뛰어난 사교성과 예술적 풍미가 최상의 조화를 이루는 감각적인 날입니다. 만남의 기회가 있다면 밝고 화사한 컬러의 소품이나 멋진 패션 스타일을 시도해 보세요. 당신의 세련된 안목이 인적 네트워크 속에서 결정적인 화두가 되어 예상치 못한 즐거운 소식을 불러옵니다.",
+      "시원하게 얼린 자두 한 알을 한입 크게 깨물었을 때 입안 가득 터져 나오는 새콤달콤한 과즙처럼, 생각지 못한 깜짝 보너스나 서프라이즈 선물이 당신의 일상을 경쾌하게 환기해 줍니다. 묵혀두었던 통장에 행운의 파란 불빛이 켜지거나, 누군가의 진심 어린 격려의 편지가 마음을 짜릿하게 흔들어 놓을 것입니다. 오늘만큼은 마음껏 설레며 상쾌하게 소소한 성취를 자축하세요.",
+      "기나긴 무더위의 터널이 끝나고 마침내 살랑이며 다가오는 선선한 초가을 바람처럼, 인생을 무겁게 짓누르던 시련의 파도가 마침내 잔잔해지고 따뜻한 안식이 찾아옵니다. 긴장감으로 바짝 메말랐던 당신의 정서가 마침내 촉촉하게 회복되며 밝고 안정된 일상으로 부드럽게 연착륙합니다. 수고 많았던 나 자신에게 부드럽고 따스한 허그와 진심 어린 격려를 아끼지 마세요.",
+      "눈부시게 타오르는 태양빛을 찬란하게 거울처럼 반사하여 에메랄드빛으로 반짝이는 바다 물결처럼, 오늘 당신이 던지는 모든 선택이 눈부신 성공으로 귀결될 징조입니다. 평소 어렵게 생각했던 복잡한 숫자나 계약 문제라도 차근차근 집중하여 접근해 보면 아주 명쾌하게 매끄러운 답을 내릴 수 있습니다. 거침없는 열정과 시원한 에너지로 오늘 하루를 당신의 멋진 무대로 만드세요.",
+      "한여름 밤 잔잔하게 속삭이듯 쏟아져 내리는 모닥불 근처에서 나누는 포근한 대화처럼, 신선하고 끈끈한 협력관계가 새롭게 만들어질 흐름입니다. 평소 다가가기 다소 서먹했던 직장 동료나 마음이 쓰이던 선배가 있다면 가볍게 커피 한 잔의 휴식을 제한해 보십시오. 눈에 보이는 실무적인 성과 그 이상의 값지고 든든한 평생의 인적 교류가 그 차가운 유리잔 사이에서 시작될 것입니다.",
+      "더위에 지쳤던 정원이 촉촉하게 쏟아져 내리는 여름 단비 덕에 온통 찬란한 초록빛 싱그러움으로 되살아나듯, 당신의 재정적인 상황이나 막혀있던 대출 문제가 기분 좋게 트입니다. 뜻하지 않았던 주위 사람들의 응원이나 제도적 혜택이 든든하게 당신을 받쳐주어, 미래를 향한 자금 계획을 훨씬 여유롭게 확장하여 그릴 수 있게 됩니다. 행운의 투명한 바람이 불고 있습니다.",
+      "소나무 아래 맑고 넓은 평상에 기대앉아 먹는 가을의 꿀맛처럼, 일상 도처에 흩어져 있는 지극히 사소하면서도 사랑스러운 작은 평화들이 온종일 당신을 빙그레 웃음 짓게 만듭니다. 하늘의 구름 모양, 귀여운 아기 고양이의 발걸음, 점심시간 맛있는 한 끼 식사 등, 지극히 소소한 일상에서 완벽한 가치의 삶을 만끽해 보며 평화의 씨앗을 오늘 소중히 길러 보세요.",
+      "오래된 도서관의 차가운 에어컨 바람 밑에 앉아 읽어 내려가는 낡은 인문학 책 속 한 줄의 문장처럼, 복잡하게 흔들리던 생각의 중심축이 마침내 바르고 단단하게 자리 잡습니다. 타인의 평가에 전전긍긍하며 이리저리 표류하던 시간을 과감히 멈추고 온전히 당신 고유의 철학과 속도를 인정해 주십시오. 당신의 정체성이 맑고 선명할 때 가장 어울리는 사람들이 당신을 찾게 됩니다.",
+      "뜨거운 해변 백사장 위를 어깨동무를 한 채 다정하고 장난스럽게 걸어가는 절친한 친구들의 발자국처럼, 동료나 파트너와의 신뢰도가 유난히 깊어지는 흐름입니다. 거창하고 화려한 설명으로 상대를 설득하기보다는, 다소 투박하고 솔직하더라도 가슴 속 진심 어린 이야기를 들려주는 편이 훨씬 효과적입니다. 오늘의 그 솔직함이 두터운 우정의 든든한 안전장치를 선물합니다.",
+      "시원한 계곡 깊은 수풀 사이 그늘 밑에서 홀로 맑게 자라나는 야생 수선화처럼, 당신의 지조 있고 차분한 성향이 시끄러운 조직 생활 속에서 군계일학으로 빛을 발하는 기특한 시기입니다. 굳이 대세에 휩쓸려 무리한 파티에 참여하거나 남들의 뜬소문에 조급하게 동조할 필요가 전혀 없습니다. 고요하고 우아한 나만의 루틴을 유지하는 일에만 온 신경을 기분 좋게 쏟으세요.",
+      "한여름 한밤중에 갑자기 밤하늘을 조용히 사선으로 가르는 아름다운 꼬리의 유성우처럼, 평소 품어두었던 간절한 소원 하나가 예기치 못한 우연으로 실현됩니다. 오랫동안 원했던 시험의 기쁜 합격 소식이나 소중하게 키워가던 소통의 성취가 당신을 마중하러 다가옵니다. 이 찬란하고 기분 좋은 영광의 기억을 가만히 보관해 삶의 원동력으로 오랫동안 삼아 보시기를 바랍니다.",
+      "청아한 저녁노을이 붉은빛에서 차분한 연보랏빛으로 물들어가는 하늘을 바라볼 때처럼, 마음속에 넘치던 겉돌던 열정이 한층 성숙하고 깊이 있는 성찰로 승화되는 고요하고 깊은 날입니다. 오늘은 그동안 달리기만 했던 발걸음을 아주 잠깐 멈추어 세우고, 지금까지 이루어낸 수많은 성장의 흔적들을 애정 깊게 기록해 보세요. 차분하게 채운 기록이 큰 비전이 됩니다.",
+      "초록으로 온통 뒤덮인 깊은 산자락을 시원하고 상쾌하게 훑으며 휘감아 내려가는 맑은 산바람처럼, 최근 피로하게 쌓였던 육체적 무거움과 정신적 피로가 마법같이 말끔히 씻겨갑니다. 오늘만큼은 영양가 있는 맛있는 보양식 식사를 챙겨 먹거나 몸을 부드럽게 움직이는 가벼운 요가, 혹은 따뜻한 반신욕을 적극 추천해 드립니다. 몸의 주파수가 맑아질 때 비로소 생각도 맑아집니다.",
+      "여름 소나기가 정갈하게 그친 뒤, 아기자기한 이파리 끝에 아롱아롱 매달려 반짝반짝 세상을 반사해 주는 물방울처럼 투명하고 기분 좋은 흐름을 품었습니다. 당신의 영혼이 한없이 맑아져 평소보다 타인의 슬픔에 깊이 있게 공감해 주거나, 아주 명확한 통찰력을 바탕으로 주위의 어지러운 관계망을 아주 상쾌하게 교통정리 해 줄 능력이 충분히 갖추어진 멋진 순간입니다.",
+      "오래된 정원 한구석, 무더운 열기를 고스란히 이겨내고 선홍빛 꽃잎을 백 일 동안 가득 피워내는 강인한 백일홍처럼 오랫동안 믿음직하게 가꾸어 온 우정이 빛납니다. 잠시 왕래가 뜸해 소원해졌던 오랜 단짝이 있다면, 아무런 거부감 없이 먼저 가벼운 메세지 하나를 전해보세요. 시간의 공백이 느껴지지 않을 만큼 아주 편안하고 따뜻한 위안이 양어깨 가득 채워질 것입니다.",
+      "조용히 파도 소리만이 나지막하게 속삭이는 무인도 해변가에 누워 즐기는 호사스러운 단잠처럼, 현실의 모든 거친 압박감과 잡념들이 눈 녹듯 사그라지는 날입니다. 중요한 프로젝트의 일단락을 의미하기도 하니, 오늘만큼은 책임감과 완벽주의의 끈을 가볍게 풀어서 서랍 속에 넣어두세요. 마땅히 누려야 할 평화와 홀가분함을 가슴 가득 시원하게 들이쉬어야 합니다.",
+      "한여름 대낮의 무더위를 기분 좋게 가시게 해 줄 달콤하고 차가운 소다맛 소르베가 입안에서 부드럽게 녹아내리듯, 마음 깊은 곳 응어리졌던 갈등과 오해가 스르르 풀어집니다. 먼저 찾아와 손을 잡거나 멋쩍은 미소를 지어 보이며 다가오는 지인을 너그러운 넓은 마음으로 흔쾌히 수용해 보십시오. 원망을 거두어낸 빈자리에 훨씬 풍요로운 행운의 열매가 맺힙니다.",
+      "시원한 실내에서 머그잔 가득 담긴 아이스 커피의 얼음들이 서로 기분 좋게 짤랑이며 부딪히는 맑은 소리처럼, 온몸에 상쾌하고 기운찬 활력이 가득 차오릅니다. 지지부진하던 공부 진도가 막힘없이 시원시원하게 진전되거나, 평소 해결하기 힘들었던 난해한 코딩 작업이 아주 짜릿하게 손가락 끝에서 술술 풀릴 흐름입니다. 엄청난 몰입을 시도하기에 최고의 적기입니다.",
+      "여름 밤바다 위를 오가는 배들에게 안전한 길을 밝혀주는 우뚝 솟은 등대의 환하고 든든한 불빛처럼, 방황과 고민으로 방황하던 당신 앞에 멘토가 다가옵니다. 선배의 풍부한 경험에서 우러나온 지혜 가득한 조언 한마디가, 막막해 보이던 당신의 기획 단계에 엄청난 돌파구와 아이디어를 안겨줄 것입니다. 겸손하고 경청하는 태도로 상대방의 지혜를 온전히 수수해 보세요.",
+      "눈부시게 맑고 쾌청한 파란 하늘 위를 자유롭게 둥둥 부유하는 하얗고 보드라운 뭉게구름처럼, 기발하고 가벼운 발상의 전환이 가슴 가득 날개를 달아주는 경쾌한 날입니다. 기존의 따분한 작업 방식이나 해묵은 고정관념에서 벗어나 전혀 새로운 프로세스를 시험해 보기 위해 소소한 모험을 단행해 보세요. 당신의 유연한 태도가 놀라운 업무 효율을 가져다줄 것입니다.",
+      "바람에 사그락거리는 청량한 대나무 숲길을 하염없이 조용히 걸을 때 스며드는 아늑함처럼, 오늘 당신이 가꾸어 나갈 소소한 일상 속 행동들이 소중한 힐링을 선사합니다. 남들과 끝없이 비교하는 소모적인 시선을 과감히 거두어들이고, 당신이 직접 가꾼 소중한 방의 인테리어를 아기자기하게 정돈하거나 아끼는 반려식물에게 물을 주며 초록의 평화에 물들어보세요.",
+      "자두와 레몬 과즙이 시원하게 가득 섞인 스파클링 에이드를 쭉 들이켰을 때 머리끝까지 퍼지는 상쾌함처럼, 오랫동안 정체되어 답답하던 아이디어에 명확한 깨달음이 내립니다. 주저하며 생각으로만 머무르던 창작 작업을 과감하게 드로잉 보드 위에 펼쳐보거나 첫 트랙을 녹음해 보세요. 망설임이 멈춘 자리에 엄청난 명작의 뼈대가 드디어 힘차게 세워질 것입니다.",
+      "시원하게 넓게 펼쳐진 초록의 잔디밭 위에서 연인들과 가벼운 마음으로 아기자기하게 즐기는 소풍길처럼, 인간관계에 즐거운 미소와 다정함이 넘칩니다. 오늘은 억지로 격식을 차려야 하는 거창한 자리보다는, 평온한 평상복 차림으로 벤치에 앉아 아이스크림을 나눠 먹으며 가볍고 소박하게 대화를 즐길 때 당신의 독특한 가치와 편안한 매력이 훨씬 깊이 있게 전달됩니다.",
+      "여름날 해 질 무렵 동네 어귀에 은은하고 아스라하게 피어나는 분홍빛 수국 꽃밭처럼, 당신을 오랫동안 짝사랑해 왔거나 깊이 동경해 오던 숨겨진 조력자가 존재감을 보입니다. 겉으로 크게 떠들지 않는 묵묵한 사람이지만, 당신이 가장 곤경에 처했을 때 가장 먼저 따뜻한 손길을 건넬 든든한 은인입니다. 주변의 소소한 인연들을 따스한 온도로 꼼꼼하게 챙기십시오.",
+      "햇살 가득 찬 찬란한 유리창 너머로 비쳐 들어오는 알록달록한 스테인드글라스 불빛처럼, 당신의 숨겨진 예술적 재능이나 감각이 넓은 무대에서 대중의 사랑을 받습니다. 감각적인 기획을 발표하거나 독창적인 디자인 시안을 제안하기에 가장 세련된 흐름이 들어와 있습니다. 수줍어하며 숨지 말고, 과감하게 당신의 화려하고 우아한 색을 세상 앞에 당당히 드러내 보십시오.",
+      "깊고 깊은 여름날의 밤, 고요한 숲속 어딘가 맑고 아늑한 연못가에서 하룻밤 묵어가듯 내면에 깊고 진정한 휴식과 정갈한 평화가 깃드는 흐름입니다. 무리해서 다른 사람의 약속에 응하려 피곤하게 움직일 이유가 하등 없는 날입니다. 일찍 모든 업무 전자기기를 끈 채, 포근한 침대 속에서 은은한 허브 향을 맡으며 완전히 깊은 잠 속으로 다정하게 빠져들어 보세요.",
+      "자두가 빨갛게 무르익는 싱그러운 농장 위로 불어오는 기분 좋은 향긋한 바람처럼, 당신의 사랑 가득한 연애운과 가정의 행복도가 눈부시게 높아집니다. 소중한 사람과 마주 보고 앉아 그동안 미처 전하지 못했던 수줍은 진심이나 가벼운 감사의 뜻을 부드럽게 꺼내어 보세요. 오랜 서운함도 흔적 없이 사르르 녹아내리며 더없이 애정 어린 사이로 거듭납니다.",
+      "지독한 한여름의 뙤약볕 더위 속에서도 한 줄기 올곧은 성장을 멈추지 않는 들판의 초록 알곡들처럼, 당신의 비즈니스적 역량이나 내면의 깊이가 한 단계 단단해집니다. 당장의 눈부신 성공이라는 달콤한 열매가 바로 떨어지지 않을지라도, 당신이 오늘의 땀방울을 통해 다져놓은 이 튼튼한 뿌리는 결코 흐려지지 않고 머지않은 미래에 울창한 숲이 되어 줄 것입니다."
+    ];
+
+    const directions = ["동쪽", "남쪽", "서남쪽", "동남쪽", "북쪽", "동북쪽", "서쪽", "서북쪽"];
+    
+    // 여름 바이브를 담은 트렌디 컬러셋
+    const colorOptions = [
+      { key: "plum-ruby", name: "자두 루비", hex: "#e11d48" },
+      { key: "ocean-blue", name: "오션 딥블루", hex: "#1d4ed8" },
+      { key: "neon-mint", name: "여름 네온민트", hex: "#10b981" },
+      { key: "citrus-lime", name: "시트러스 라임", hex: "#a3e635" },
+      { key: "peach-pink", name: "살구 선셋", hex: "#fb923c" },
+      { key: "vintage-indigo", name: "여름밤 인디고", hex: "#4338ca" },
+      { key: "sakura-pink", name: "사쿠라 핑크", hex: "#fecdd3" },
+      { key: "sky-blue", name: "스카이 블루", hex: "#7dd3fc" },
+      { key: "lavender-purple", name: "라벤더 퍼플", hex: "#e8d5ff" },
+      { key: "lemon-chiffon", name: "레몬 쉬폰", hex: "#fef9c3" }
+    ];
+
+    const foods = [
+      "자두 소르베", "복숭아 타르트", "시원한 수박화채", "말차 빙수", "치아바타 샌드위치",
+      "블루베리 크럼블", "레몬 마들렌", "망고 코코넛 젤리", "얼그레이 스콘", "플레인 까눌레",
+      "블루베리케이크", "자몽케이크", "크루아상", "치즈케이크", "샌드위치", "과일 타르트", "바게트"
+    ];
+
+    const drinks = [
+      // 신규 추가된 자두 시그니처 4종
+      { id: "plum_ade", name: "자두에이드", note: "톡 쏘는 청량한 탄산수와 붉은 자두 과육의 새콤함이 입 안 가득 싱그럽게 퍼지는 여름 대표 스파클링 에이드" },
+      { id: "plum_latte", name: "자두라떼", note: "부드럽고 고소한 우유와 진한 수제 자두 청이 어우러져 한층 더 깊고 부드럽게 채워지는 시그니처 과일 라떼" },
+      { id: "plum_milk", name: "자두우유", note: "달콤하게 잘 익은 자두를 아낌없이 담아 아이부터 어른까지 부드럽고 가볍게 즐길 수 있는 산뜻하고 순수한 우유" },
+      { id: "plum_tea", name: "자두담은티", note: "붉은 여름 햇살을 닮은 향긋한 티 베이스에 자두의 짙은 풍미가 깊이 녹아들어 우아하고 차분하게 즐기는 시원한 후르츠 티" },
+      
+      // 망고 제외 및 복원된 원래 소중한 클래식/시그니처 음료들
+      { id: "einspanner", name: "아인슈페너", note: "부드럽고 쫀득한 크림 뒤에 찾아오는 에스프레소의 깊은 풍미" },
+      { id: "chocolatte", name: "초코라떼", note: "진한 초콜릿의 달콤함이 하루의 피로를 사르르 녹여주는 라떼" },
+      { id: "matchalatte", name: "말차라떼", note: "차분한 말차의 향과 부드러운 우유가 선사하는 쌉싸름한 조화" },
+      { id: "apple_ade", name: "애플에이드", note: "아삭한 사과의 상큼함에 청량한 탄산이 더해진 시원한 에이드" },
+      { id: "apple_tea", name: "애플티", note: "사과의 달콤한 향이 온몸으로 퍼지는 따뜻하고 편안한 시간" },
+      { id: "sunset_beach_ade", name: "썬셋비치에이드", note: "노을빛 바다를 담은 화려한 색감과 이국적인 과일의 상큼함" },
+      { id: "americano", name: "아메리카노", note: "와이니한 향과 깔끔한 산미가 인상적인 아메리카노" },
+      { id: "cafelatte", name: "카페라떼", note: "부드러운 우유와 깔끔한 에스프레소가 어우러진 라떼" },
+      { id: "vanillalatte", name: "바닐라라떼", note: "은은한 바닐라 향이 감도는 달콤하고 부드러운 라떼" },
+      { id: "potted_smoothie", name: "화분스무디", note: "초코 크럼블이 토핑된 달콤하고 시원한 디저트 스무디" },
+      { id: "hitch_icetea", name: "히치아이스티", note: "상큼한 과일 향과 깔끔한 단맛이 어우러진 아이스티" },
+      { id: "emerald_ade", name: "에메랄드에이드", note: "청량한 색감과 상큼한 맛이 돋보이는 스파클링 에이드" }
+    ];
+
+    function renderDrinkSVG(drinkId) {
+      let gradientStart = "#fda4af";
+      let gradientEnd = "#e11d48";
+      let detailMarkup = "";
+
+      // 1. 자두에이드
+      if (drinkId === "plum_ade") {
+        gradientStart = "#ff007f";
+        gradientEnd = "#800020";
+        detailMarkup = `
+          <circle cx="42" cy="55" r="1.5" fill="#fff" opacity="0.8"/>
+          <circle cx="58" cy="45" r="2" fill="#fff" opacity="0.7"/>
+          <circle cx="48" cy="70" r="1" fill="#fff" opacity="0.9"/>
+          <circle cx="54" cy="62" r="2.5" fill="#fff" opacity="0.6"/>
+          <rect x="38" y="42" width="10" height="10" rx="2" fill="#fff" opacity="0.3" transform="rotate(15 43 47)"/>
+          <rect x="50" y="52" width="12" height="12" rx="2" fill="#fff" opacity="0.3" transform="rotate(-25 56 58)"/>
+          <path d="M 33 26 C 25 24 23 30 33 30 Z" fill="#10b981" />
+          <path d="M 33 30 C 27 34 26 28 33 26 Z" fill="#047857" />
+          <line x1="62" y1="12" x2="48" y2="82" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>
+        `;
+      // 2. 자두라떼
+      } else if (drinkId === "plum_latte") {
+        gradientStart = "#fff1f2";
+        gradientEnd = "#b91c1c";
+        detailMarkup = `
+          <path d="M 32 50 Q 50 46 68 50 L 68 82 L 32 82 Z" fill="#b91c1c" opacity="0.95"/>
+          <path d="M 32 50 Q 50 54 68 50 L 68 55 L 32 55 Z" fill="#fda4af" opacity="0.8"/>
+          <line x1="64" y1="14" x2="52" y2="82" stroke="#fb923c" stroke-width="4" stroke-linecap="round"/>
+        `;
+      // 3. 자두우유
+      } else if (drinkId === "plum_milk") {
+        gradientStart = "#ffe4e6";
+        gradientEnd = "#f43f5e";
+        detailMarkup = `
+          <circle cx="45" cy="40" r="5" fill="#be123c"/>
+          <path d="M 45 35 Q 48 30 43 27" stroke="#4ade80" stroke-width="1.5" fill="none"/>
+          <line x1="62" y1="12" x2="48" y2="82" stroke="#4338ca" stroke-width="4" stroke-linecap="round"/>
+        `;
+      // 4. 자두담은티
+      } else if (drinkId === "plum_tea") {
+        gradientStart = "#f43f5e";
+        gradientEnd = "#4c0519";
+        detailMarkup = `
+          <circle cx="50" cy="45" r="11" fill="#facc15" opacity="0.8"/>
+          <circle cx="50" cy="45" r="9" fill="#f97316" opacity="0.9"/>
+          <line x1="50" y1="34" x2="50" y2="56" stroke="#ffedd5" stroke-width="1"/>
+          <line x1="39" y1="45" x2="61" y2="45" stroke="#ffedd5" stroke-width="1"/>
+          <line x1="58" y1="15" x2="44" y2="80" stroke="#047857" stroke-width="3" stroke-linecap="round"/>
+        `;
+      // 5. 아메리카노
+      } else if (drinkId === "americano") {
+        gradientStart = "#3e2723";
+        gradientEnd = "#1a0c00";
+        detailMarkup = `
+          <rect x="36" y="36" width="14" height="14" rx="3" fill="#fff" opacity="0.25" transform="rotate(10 43 43)"/>
+          <rect x="48" y="52" width="12" height="12" rx="3" fill="#fff" opacity="0.2" transform="rotate(-20 54 58)"/>
+          <ellipse cx="50" cy="31" rx="17" ry="2" fill="#8d6e63" opacity="0.4"/>
+          <circle cx="40" cy="33" r="0.8" fill="#d7ccc8" opacity="0.6"/>
+          <line x1="62" y1="12" x2="48" y2="82" stroke="#111" stroke-width="3.5" stroke-linecap="round"/>
+        `;
+      // 6. 카페라떼
+      } else if (drinkId === "cafelatte") {
+        gradientStart = "#d7ccc8";
+        gradientEnd = "#5d4037";
+        detailMarkup = `
+          <path d="M 32 35 C 40 42 45 28 68 38 L 68 82 L 32 82 Z" fill="#8d6e63" opacity="0.7"/>
+          <rect x="38" y="45" width="12" height="12" rx="2" fill="#fff" opacity="0.25" transform="rotate(-15 44 51)"/>
+          <line x1="63" y1="13" x2="51" y2="81" stroke="#795548" stroke-width="3.5" stroke-linecap="round"/>
+        `;
+      // 7. 아인슈페너
+      } else if (drinkId === "einspanner") {
+        gradientStart = "#2d1500";
+        gradientEnd = "#150a00";
+        detailMarkup = `
+          <path d="M 31.8 30 L 32.8 45 C 42 49 58 49 67.2 45 L 68.2 30 Z" fill="#fafafa"/>
+          <ellipse cx="50" cy="30" rx="18" ry="4" fill="#ffffff"/>
+          <circle cx="44" cy="30" r="1" fill="#795548"/>
+          <circle cx="52" cy="28" r="1.5" fill="#5d4037"/>
+        `;
+      // 8. 말차라떼
+      } else if (drinkId === "matchalatte") {
+        gradientStart = "#e8f5e9";
+        gradientEnd = "#1b5e20";
+        detailMarkup = `
+          <path d="M 32 45 Q 50 40 68 47 L 68 82 L 32 82 Z" fill="#2e7d32" opacity="0.95"/>
+          <path d="M 32 45 Q 50 50 68 45 L 68 53 L 32 53 Z" fill="#a5d6a7" opacity="0.8"/>
+          <line x1="62" y1="12" x2="48" y2="82" stroke="#1b5e20" stroke-width="3.5" stroke-linecap="round"/>
+        `;
+      // 9. 초코라떼
+      } else if (drinkId === "chocolatte") {
+        gradientStart = "#5c3a21";
+        gradientEnd = "#2b1704";
+        detailMarkup = `
+          <path d="M 31.8 30 L 32.8 40 C 42 44 58 44 67.2 40 L 68.2 30 Z" fill="#f5f5f5" opacity="0.9"/>
+          <path d="M 38 42 Q 50 48 62 42 L 62 82 L 38 82 Z" fill="#3e2723" opacity="0.4"/>
+          <line x1="62" y1="12" x2="48" y2="82" stroke="#5d4037" stroke-width="4" stroke-linecap="round"/>
+        `;
+      // 10. 애플에이드
+      } else if (drinkId === "apple_ade") {
+        gradientStart = "#a3e635";
+        gradientEnd = "#15803d";
+        detailMarkup = `
+          <circle cx="50" cy="45" r="10" fill="#facc15" opacity="0.8"/>
+          <circle cx="50" cy="45" r="8" fill="#e11d48" opacity="0.6"/>
+          <circle cx="44" cy="60" r="2" fill="#fff" opacity="0.7"/>
+          <circle cx="56" cy="55" r="1.5" fill="#fff" opacity="0.8"/>
+          <line x1="64" y1="15" x2="50" y2="80" stroke="#15803d" stroke-width="3" stroke-linecap="round"/>
+        `;
+      // 11. 애플티
+      } else if (drinkId === "apple_tea") {
+        gradientStart = "#fb923c";
+        gradientEnd = "#c2410c";
+        detailMarkup = `
+          <circle cx="48" cy="45" r="12" fill="#bef264" opacity="0.8"/>
+          <line x1="48" y1="35" x2="48" y2="55" stroke="#a3e635" stroke-width="2"/>
+          <line x1="58" y1="15" x2="44" y2="80" stroke="#7c2d12" stroke-width="3" stroke-linecap="round"/>
+        `;
+      // 12. 썬셋비치에이드
+      } else if (drinkId === "sunset_beach_ade") {
+        gradientStart = "#ec4899";
+        gradientEnd = "#f59e0b";
+        detailMarkup = `
+          <path d="M 32 45 Q 50 40 68 45 L 68 82 L 32 82 Z" fill="#3b82f6" opacity="0.4"/>
+          <circle cx="50" cy="38" r="8" fill="#facc15" opacity="0.9"/>
+          <line x1="60" y1="12" x2="46" y2="82" stroke="#db2777" stroke-width="3.5" stroke-linecap="round"/>
+        `;
+      // 13. 바닐라라떼
+      } else if (drinkId === "vanillalatte") {
+        gradientStart = "#fef08a";
+        gradientEnd = "#78350f";
+        detailMarkup = `
+          <ellipse cx="50" cy="33" rx="17" ry="3" fill="#fbbf24" opacity="0.8"/>
+          <line x1="63" y1="14" x2="49" y2="82" stroke="#d97706" stroke-width="3.5" stroke-linecap="round"/>
+        `;
+      // 14. 화분스무디
+      } else if (drinkId === "potted_smoothie") {
+        gradientStart = "#3b2314";
+        gradientEnd = "#170a03";
+        detailMarkup = `
+          <rect x="33" y="30" width="34" height="8" rx="2" fill="#54321c"/>
+          <!-- 새싹 잎사귀 -->
+          <path d="M 50 30 C 44 22 46 16 50 14 C 54 16 56 22 50 30" fill="#22c55e"/>
+          <circle cx="45" cy="34" r="0.8" fill="#fff" opacity="0.5"/>
+          <circle cx="55" cy="34" r="0.8" fill="#fff" opacity="0.5"/>
+        `;
+      // 15. 히치아이스티
+      } else if (drinkId === "hitch_icetea") {
+        gradientStart = "#d97706";
+        gradientEnd = "#78350f";
+        detailMarkup = `
+          <circle cx="50" cy="45" r="9" fill="#fef08a" opacity="0.7"/>
+          <rect x="38" y="46" width="12" height="12" rx="2" fill="#fff" opacity="0.2" transform="rotate(15 44 52)"/>
+          <line x1="60" y1="14" x2="46" y2="81" stroke="#b45309" stroke-width="3.5" stroke-linecap="round"/>
+        `;
+      // 16. 에메랄드에이드
+      } else if (drinkId === "emerald_ade") {
+        gradientStart = "#06b6d4";
+        gradientEnd = "#047857";
+        detailMarkup = `
+          <circle cx="42" cy="55" r="1.5" fill="#fff" opacity="0.8"/>
+          <circle cx="58" cy="45" r="2" fill="#fff" opacity="0.7"/>
+          <circle cx="50" cy="65" r="1" fill="#fff" opacity="0.9"/>
+          <rect x="40" y="45" width="10" height="10" rx="2" fill="#fff" opacity="0.25" transform="rotate(25 45 50)"/>
+          <line x1="62" y1="12" x2="48" y2="82" stroke="#0891b2" stroke-width="4" stroke-linecap="round"/>
+        `;
+      }
+
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-20 h-20 drop-shadow-md">
+          <defs>
+            <linearGradient id="plumGrad_${drinkId}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="${gradientStart}" />
+              <stop offset="100%" stop-color="${gradientEnd}" />
+            </linearGradient>
+            <linearGradient id="glassReflection" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
+              <stop offset="30%" stop-color="#ffffff" stop-opacity="0.1"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          
+          <!-- 유리컵의 그림자 -->
+          <ellipse cx="50" cy="88" rx="20" ry="4" fill="#cbd5e1" />
+
+          <!-- 음료 본체 레이어 -->
+          <path d="M 32 30 L 36 82 Q 50 86 64 82 L 68 30 Z" fill="url(#plumGrad_${drinkId})" />
+
+          <!-- 특화 세부 오브젝트 오버레이 -->
+          ${detailMarkup}
+
+          <!-- 외곽 유리컵 프레임 묘사 -->
+          <path d="M 30 25 L 35 83 Q 50 88 65 83 L 70 25" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+          
+          <!-- 투명 반사광 하이라이트 -->
+          <path d="M 33 29 L 37 80" fill="none" stroke="url(#glassReflection)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      `;
+    }
+
+    function strHash(s) {
+      let h = 2166136261 >>> 0;
+      for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = (h * 16777619) >>> 0;
+      }
+      return h >>> 0;
+    }
+
+    function mulberry32(a) {
+      return function() {
+        a |= 0; a = a + 0x6D2B79F5 | 0;
+        let t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+
+    let userId = localStorage.getItem("presentCoffeeUserId_summer");
+    if (!userId) {
+      userId = Math.random().toString(36).slice(2, 10);
+      localStorage.setItem("presentCoffeeUserId_summer", userId);
+    }
+
+    // 셔플 모드 대응
+    let activeUserId = userId;
+    if (useShuffle) {
+      activeUserId += "|" + Math.random().toString(36).slice(2, 8);
+    }
+
+    function buildFortuneApp() {
+      const makeRand = (label) => mulberry32(strHash(`${shop}|${todayStr}|${activeUserId}|${label}`));
+      
+      const rFortune = makeRand("fortune_summer");
+      const rScore   = makeRand("score_summer");
+      const rKW      = makeRand("kw_summer");
+      const rDrink   = makeRand("drink_summer");
+
+      const pickFrom = (arr, r) => arr[Math.floor(r() * arr.length)];
+      const randIntFrom = (r, min, max) => Math.floor(r() * (max - min + 1)) + min;
+
+      const stableSeed = strHash(`${shop}|${todayStr}`);
+      const dailyCode = String((stableSeed % 1000000 + 1000000) % 1000000).padStart(6, '0');
+
+      // 1. 여름 포춘 메시지 도출
+      const selectedFortune = pickFrom(fortunes, rFortune);
+
+      // 2. 파란색-민트색 그라데이션에 어울리는 행운지수 수치 배포 (정갈한 블루&민트 테마)
+      const rawScores = [
+        { label: "시트러스 활동운", val: randIntFrom(rScore, 75, 99) },
+        { label: "청량 재물운", val: randIntFrom(rScore, 70, 98) },
+        { label: "해변 로맨스운", val: randIntFrom(rScore, 65, 100) },
+        { label: "소다 인간관계", val: randIntFrom(rScore, 70, 97) },
+        { label: "스파클링 활력", val: randIntFrom(rScore, 75, 99) }
+      ];
+
+      // 3. 네 가지 행운 키워드
+      const kwNum = randIntFrom(rKW, 1, 9);
+      const kwDirection = pickFrom(directions, rKW);
+      const kwColorChoice = pickFrom(colorOptions, rKW);
+      const kwFoodChoice = pickFrom(foods, rKW);
+
+      // 4. 오늘의 음료 매칭 (자두 4종 + 클래식 및 복원된 원래 메뉴)
+      const selectedDrink = pickFrom(drinks, rDrink);
+
+      // 5. 우대 기한 계산 (작성일 기준 3일 유효)
+      const validDate = new Date(Date.UTC(yyyy, Number(mm)-1, Number(dd)));
+      validDate.setUTCDate(validDate.getUTCDate() + 3);
+      const vyyyy = validDate.getUTCFullYear();
+      const vmm = String(validDate.getUTCMonth() + 1).padStart(2, '0');
+      const vdd = String(validDate.getUTCDate()).padStart(2, '0');
+      const validStr = `${vyyyy}-${vmm}-${vdd}`;
+
+      // ---- UI 구성 요소에 매핑하기 ----
+      const fTextEl = document.getElementById('fortuneText');
+      fTextEl.innerHTML = `<span class="fade-text">${selectedFortune}</span>`;
+      
+      document.getElementById('validUntil').textContent = `${validStr} 23:59`;
+      document.getElementById('validUntil2').textContent = validStr;
+      document.getElementById('dailyCode').textContent = dailyCode;
+      document.getElementById('kwNumber').textContent = kwNum;
+      document.getElementById('kwDir').textContent = kwDirection;
+
+      // 행운의 컬러 전용 팔레트 스패치 구성
+      const colorEl = document.getElementById('kwColor');
+      colorEl.innerHTML = '';
+      const sw = document.createElement('span'); 
+      sw.className = 'w-3 h-3 rounded-full border border-white/40 block'; 
+      sw.style.backgroundColor = kwColorChoice.hex;
+      const txt = document.createElement('span'); 
+      txt.textContent = kwColorChoice.name;
+      colorEl.appendChild(sw); 
+      colorEl.appendChild(txt);
+
+      document.getElementById('kwFood').textContent = kwFoodChoice;
+      document.getElementById('drinkName').textContent = selectedDrink.name;
+      document.getElementById('drinkNote').textContent = selectedDrink.note;
+
+      // 음료 전용 SVG 렌더링 주입
+      const drinkImgContainer = document.getElementById('drinkImgContainer');
+      drinkImgContainer.innerHTML = renderDrinkSVG(selectedDrink.id);
+
+      // 매장/캠페인 정보 매칭
+      document.getElementById('shopId').textContent = shop;
+      document.getElementById('nowKST').textContent = `${todayStr} ${String(nowKST.getUTCHours()).padStart(2,'0')}:${String(nowKST.getUTCMinutes()).padStart(2,'0')}:${String(nowKST.getUTCSeconds()).padStart(2,'0')}`;
+
+      const scoresHolder = document.getElementById('scores');
+      scoresHolder.innerHTML = '';
+      
+      rawScores.forEach(s => {
+        const scoreItem = document.createElement('div');
+        scoreItem.className = 'space-y-1.5';
+        scoreItem.innerHTML = `
+          <div class="flex justify-between items-center text-xs font-bold text-slate-700">
+            <span>${s.label}</span>
+            <span class="text-blue-600 font-extrabold text-sm">${s.val}<span class="text-xs font-normal text-slate-400">점</span></span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" style="width: 0%"></div>
+          </div>
+        `;
+        scoresHolder.appendChild(scoreItem);
+        
+        // 타임아웃 레이턴시를 두어 부드러운 전개 애니메이션 연출
+        setTimeout(() => {
+          const fillBar = scoreItem.querySelector('.progress-bar-fill');
+          if (fillBar) fillBar.style.width = `${s.val}%`;
+        }, 100);
+      });
+    }
+
+    const toastBox = document.getElementById('toastBox');
+    const toastText = document.getElementById('toastText');
+    const toastIcon = document.getElementById('toastIcon');
+    let toastTimeout;
+
+    function showToast(message, isSuccess = true) {
+      clearTimeout(toastTimeout);
+      toastText.textContent = message;
+      
+      if (isSuccess) {
+        toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-sm";
+      } else {
+        toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-400 text-sm";
+      }
+
+      toastBox.style.opacity = "1";
+      toastBox.style.transform = "translateX(-50%) translateY(-8px)";
+
+      toastTimeout = setTimeout(() => {
+        toastBox.style.opacity = "0";
+        toastBox.style.transform = "translateX(-50%) translateY(0)";
+      }, 2500);
+    }
+
+    const shareBtn = document.getElementById('shareBtn');
+    shareBtn.addEventListener('click', async () => {
+      const dailyCodeVal = document.getElementById('dailyCode').textContent;
+      const drinkNameVal = document.getElementById('drinkName').textContent;
+      const validUntilVal = document.getElementById('validUntil').textContent;
+      const shareUrl = location.href;
+
+      const shareText = `[현재의 공간] 싱그러운 여름의 운세 🏖️\n\n🧡 오늘의 확인코드: ${dailyCodeVal}\n🍹 오늘의 추천 음료: ${drinkNameVal}\n📅 쿠폰 우대 기한: ${validUntilVal}\n\n지금 아래 링크에서 당신의 여름 운세와 오늘의 행운 음료를 확인해 보세요!\n${shareUrl}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "현재의 공간 — 여름의 운세 & 오늘의 음료",
+            text: shareText,
+            url: shareUrl
+          });
+        } catch (err) {
+          // 공유 중단 시 예외 우회
+        }
+      } else {
+        const dummyArea = document.createElement('textarea');
+        dummyArea.value = shareText;
+        document.body.appendChild(dummyArea);
+        dummyArea.select();
+        try {
+          document.execCommand('copy');
+          showToast("여름 운세 정보가 클립보드에 복사되었습니다! 🎉");
+        } catch (copyErr) {
+          showToast("복사에 실패했습니다. 수동으로 캡처해 주세요.", false);
+        }
+        document.body.removeChild(dummyArea);
+      }
+    });
+
+    // ---- 새로운 여름 운세 리셔플 버튼 이벤트 ----
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    shuffleBtn.addEventListener('click', () => {
+      const icon = shuffleBtn.querySelector('i');
+      icon.classList.add('fa-spin');
+      
+      // 음료 컵 흔들림 애니메이션 효과 주기
+      const drinkContainer = document.getElementById('drinkImgContainer');
+      drinkContainer.classList.add('shake-active');
+
+      activeUserId = userId + "|shuffle|" + Math.random().toString(36).slice(2, 8);
+      
+      setTimeout(() => {
+        buildFortuneApp();
+        icon.classList.remove('fa-spin');
+        drinkContainer.classList.remove('shake-active');
+        showToast("새로운 오늘의 여름 행운이 찾아왔습니다! 🍹");
+      }, 750);
+    });
+
+    // 앱 초기화 로드
+    window.onload = function() {
+      buildFortuneApp();
+    };
+
+  })();
+  </script>
 </body>
 </html>
